@@ -1,0 +1,109 @@
+.cart-page {
+
+    .cart-left-section {
+        border-right: 1px solid #d9d9d9;
+        padding: 0 20px;
+
+        .title {
+            margin: 32px 0 16px;
+            font-size: 30px;
+            font-weight: 600;
+        }
+
+        .payment {
+            .payment-item {
+                padding: 15px 20px;
+                cursor: pointer;
+                border: 1px solid #2f5acf;
+                margin-bottom: 1rem;
+
+                .payment-item-name {
+                    padding: 0px 14px;
+
+                    p {
+                        margin: 0;
+                        font-size: 14px;
+                    }
+                }
+
+                .payment-item-icon {
+                    padding: 0px 14px;
+                    font-size: 32px;
+                    margin-bottom: 11px;
+                }
+            }
+        }
+
+        .btn-container {
+            
+            button {
+                width: 100%;
+                height: 55px;
+                border: none;
+                border-radius: 16px;
+                font-size: 14px;
+                line-height: 1.5;
+                font-weight: 500;
+                background-color: #000;
+                color: #fff;
+                transition: all 0.2s linear;
+            }
+
+            button:hover {
+                background-color: #d9d9d9;
+                color: #000;
+            }
+        }
+
+        .btn-container.btn-loading {
+    
+            button:hover {
+                background-color: #000;
+                color: #fff;
+                cursor: default;
+            }
+        }
+    }
+
+    .cart-right-section {
+        .title {
+            margin: 32px 0 16px;
+            font-size: 30px;
+            font-weight: 600;
+        }
+
+        .pricing-info {
+            padding: 6px 0;
+
+            .pricing-info-item:first-child {
+                padding-top: 1rem;
+
+                &::after {
+                    position: absolute;
+                    content: '';
+                    top: 0;
+                    width: 98%;
+                    height: 1px;
+                    background-color: #ccc;
+                    margin: 0 auto;
+                    margin-bottom: 12px;
+                }
+            }
+
+            .final-total-box {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+
+                &::after {
+                    position: absolute;
+                    content: '';
+                    top: 0;
+                    background-color: #ccc;
+                    height: 1px;
+                    width: 98%;
+                    margin: 0 auto;
+                }
+            }
+        }
+    }
+}

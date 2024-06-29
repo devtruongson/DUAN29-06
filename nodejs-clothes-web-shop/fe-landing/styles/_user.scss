@@ -1,0 +1,67 @@
+.user {
+    height: 100vh;
+    z-index: 1000;
+    background-color: rgba(172, 172, 172, 0.5);
+
+    .user-box {
+        background-color: var(--white);
+        width: 50vw;
+        max-width: 600px;
+        margin: auto;
+        padding: 44px;
+
+        .heading {
+            padding-bottom: 8px;
+        }
+
+        .btn-container {
+            margin: 8px 0;
+
+            button {
+                width: 100%;
+                height: 50px;
+                border: none;
+                border-radius: 50px;
+                padding: 5px 20px;
+                background-color: #000;
+                color: #fff;
+                transition: all 0.2s linear;
+                text-transform: uppercase;
+            }
+    
+            button:hover {
+                background-color: #d9d9d9;
+                color: #000;
+            }
+        }
+
+        .btn-container.btn-loading {
+    
+            button:hover {
+                background-color: #000;
+                color: #fff;
+                cursor: default;
+            }
+        }
+    }
+
+    .header-form {
+        top: 0;
+        right: 0;
+        padding: 12px 12px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .footer-form {
+        .footer-form-item {
+            text-decoration: none;
+            padding: 16px 0 4px;
+            transition: all 0.2s ease;
+        }
+
+        .footer-form-item:hover {
+            color: var(--black);
+        }
+    }
+}

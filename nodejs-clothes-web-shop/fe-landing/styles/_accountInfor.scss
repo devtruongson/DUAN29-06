@@ -1,0 +1,32 @@
+.infor-tab {
+
+    .title {
+        margin: 32px 0 16px;
+        font-size: 30px;
+        font-weight: 600;
+    }
+
+    .btn-container {
+        margin: 20px 0 40px;
+        
+        button {
+            height: 40px;
+            border: none;
+            border-radius: 20px;
+            padding: 0 30px;
+            background-color: #2f5acf;
+            color: #fff;
+            font-size: 14px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+    }
+
+    .btn-container.btn-loading {
+
+        button {
+            width: 180px;
+            cursor: default;
+        }
+    }
+}

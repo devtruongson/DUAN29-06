@@ -1,0 +1,116 @@
+.footer {
+    padding: 30px 0 70px;
+    background-color: #000;
+    color: #d9d9d9;
+    font-size: 13px;
+
+    .footer-sidebar {
+        margin-bottom: 32px;
+
+        .footer-comment {
+
+            h4 {
+                font-size: 21px;
+                line-height: 27px;
+                font-weight: 600;
+                margin-bottom: 6px;
+            }
+
+            p {
+                margin: 10px 0 30px;
+            }
+
+            a {
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                height: 43px;
+                background: #2f5acf;
+                border-radius: 16px;
+                padding: 0 30px;
+                font-size: 14px;
+                font-weight: 500;
+                letter-spacing: .03em;
+                margin-bottom: 25px;
+                text-decoration: none;
+                color: inherit;
+            }
+        }
+
+        .footer-contact {
+            
+            .contact-item {
+                
+                .contact-icon {
+                    height: 40px;
+                    margin-right: 15px;
+
+                    img {
+                        height: 100%;
+                        width: auto;
+                    }
+                }
+
+                .contact-content {
+                    
+                    span {
+                        font-weight: 600;
+                    }
+
+                    p {
+                        font-size: 16px;
+                        font-weight: 800;
+                    }
+                }
+            }
+        }
+
+        .footer-social {
+            
+            .social-icon {
+                height: 50px;
+
+                img {
+                    height: 100%;
+                    width: auto;
+                }
+            }
+        }
+    }
+
+    .footer-after {
+        border-top: 1px solid #d9d9d942;
+
+        .copyright {
+
+            .copyright-title {
+                margin-bottom: 12px;
+                font-size: 11px;
+                line-height: 14px;
+                letter-spacing: .03em;
+                font-weight: 600;
+            }
+
+            .copyright-description {
+                margin: 0;
+                font-size: 11px;
+                line-height: 14px;
+                letter-spacing: .03em;
+                font-weight: 600;
+            }
+        }
+
+        .logo {
+
+            .logo-item {
+                height: 40px;
+                cursor: pointer;
+
+                img {
+                    width: auto;
+                    height: 100%;
+                }
+            }
+        }
+    }
+}

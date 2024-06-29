@@ -1,0 +1,26 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Pangea, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+:root {
+    --height-header: 68px;
+    --height-sub-header: 56px;
+    --main-color: #f37021;
+    --sub-color: #fbe9e7;
+    --white: white;
+    --black: #000;
+    --height-input-on-search: 40px;
+}
+
+.border-radius {
+    border-radius: 16px;
+}
