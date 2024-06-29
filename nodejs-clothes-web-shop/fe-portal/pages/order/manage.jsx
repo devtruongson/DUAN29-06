@@ -57,7 +57,7 @@ const OrderManagementPage = () => {
     useEffect(() => {
         const getOrderList = async () => {
             try {
-                const result = await axios.get('http://localhost:8080/api/order/admin/list')
+                const result = await axios.get('http://localhost:8080/api/order/')
                 setOrderList(result.data)
             } catch (err) {
                 console.log(err);

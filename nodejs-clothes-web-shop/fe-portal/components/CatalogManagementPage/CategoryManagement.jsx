@@ -43,7 +43,7 @@ const Category = () => {
         }
     }
 
-    const handleCreateCategoryLevel1 = async () => {
+    const handleCreateCategoryLevel = async () => {
         const { value: newCategory } = await Swal.fire({
             title: 'Nhập tên danh mục mới',
             input: 'text',
@@ -59,9 +59,9 @@ const Category = () => {
         }
         if (newCategory) {
             try {
-                await axios.post(homeAPI + '/category/create-level1',
+                await axios.post(homeAPI + '/category/create',
                     {
-                        title: newCategory
+                        name: newCategory
                     })
                 refreshCategoryTable()
                 swtoast.success({
@@ -76,12 +76,58 @@ const Category = () => {
         }
     }
 
+    const updateCate = async (cate) => {
+        const { value: newCategory } = await Swal.fire({
+            title: 'Chỉnh sửa danh mục',
+            input: 'text',
+            inputValue: cate.name,
+            inputPlaceholder: 'Tên danh mục chỉnh sửa..',
+            showCancelButton: true,
+        });
+
+        if (newCategory) {
+            try {
+                await axios.put(homeAPI + '/category/update',
+                    {
+                        categoryID: cate.categoryID,
+                        name: newCategory,
+                    })
+                refreshCategoryTable()
+                swtoast.success({
+                    text: 'Sửa danh mục thành công!'
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+
+    const handleDelete = (cate) => {
+        Swal.fire({
+            text: "Xác nhận xóa",
+            icon: "info",
+            showCancelButton: true,
+            showConfirmButton: true
+        }).then(async (res) => {
+            if (res.isConfirmed) {
+                try {
+                    await axios.delete(homeAPI + '/category/delete/' + cate.categoryID)
+                    refreshCategoryTable()
+                    swtoast.success({
+                        text: 'Xóa danh mục thành công!'
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        })
+    }
+
     return (
         <div className="catalog-management-item">
             <Heading title="Tất cả danh mục" />
             <div className='create-btn-container'>
-                <button className='btn btn-dark btn-sm' onClick={handleCreateCategoryLevel1}>Tạo danh mục level 1</button>
-                <button className='btn btn-dark btn-sm' onClick={() => setIsModalOpen(true)}>Tạo danh mục level 2</button>
+                <button className='btn btn-dark btn-sm' onClick={handleCreateCategoryLevel}>Tạo danh mục</button>
             </div>
             <div className='table-container' style={{ height: "520px" }}>
                 <table className='table  table-hover table-bordered'>
@@ -91,9 +137,8 @@ const Category = () => {
                             <th>
                                 Tên danh mục
                             </th>
-                            <th>Level</th>
                             <th>
-                                Danh mục cha
+                                Hành động
                             </th>
                         </tr>
                     </thead>
@@ -103,9 +148,13 @@ const Category = () => {
                                 return (
                                     <tr key={index}>
                                         <td className='text-center'>{index + 1}</td>
-                                        <td>{category.title}</td>
-                                        <td>{category.level}</td>
-                                        <td>{category.parent}</td>
+                                        <td>{category.name}</td>
+                                        <td>
+                                            <button className='btn btn-primary mx-1' onClick={() => {
+                                                updateCate(category)
+                                            }}>Sửa</button>
+                                            <button className='btn btn-warning mx-1' onClick={() => handleDelete(category)}>Xóa</button>
+                                        </td>
                                     </tr>
                                 )
                             })

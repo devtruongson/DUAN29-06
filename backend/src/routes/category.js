@@ -7,10 +7,10 @@ let router = express.Router()
 
 router.post('/create', CategoryController.create);
 
-router.get('/list',CategoryController.list);
+router.get('/list', CategoryController.list);
 
-router.put('/update',CategoryController.update);
+router.put('/update', CategoryController.update);
 
-router.delete('/delete',CategoryController.deleteCategory);
+router.delete('/delete/:categoryID', CategoryController.deleteCategory);
 
 module.exports = router;
