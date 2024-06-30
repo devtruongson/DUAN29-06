@@ -1,11 +1,9 @@
-import axiosClient from '@/services/axiosClient';
+import axiosClient from "@/services/axiosClient";
 
 const categoryService = {
-
     getNestList: async () => {
-        return await axiosClient.get('/category/nest-list');
+        return await axiosClient.get("/category/list");
     },
-
 };
 
 export default categoryService;
