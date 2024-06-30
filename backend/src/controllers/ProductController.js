@@ -160,8 +160,8 @@ let listAdminSide = async (req, res, next) => {
             "productVariantID",
             "quantity",
             "created_at",
-            "colour",
-            "size",
+            "Colour",
+            "Size",
         ],
         include: [
             {
@@ -190,7 +190,6 @@ let listAdminSide = async (req, res, next) => {
     });
     return res.send(listProductVariant);
 };
-
 let listCustomerSide = async (req, res, next) => {
     let categoryID = Number(req.query.category);
     let whereClause = {};
@@ -208,8 +207,6 @@ let listCustomerSide = async (req, res, next) => {
             raw: true,
         });
 
-        // console.log(listProduct);
-
         let listProductVariant = [];
 
         // Duyệt qua danh sách sản phẩm
@@ -221,8 +218,6 @@ let listCustomerSide = async (req, res, next) => {
                 group: ["Colour"],
                 raw: true,
             });
-
-            console.log(listColor);
 
             // Duyệt qua danh sách màu
             for (let { Colour } of listColor) {

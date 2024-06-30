@@ -132,7 +132,7 @@ const ProductAdmin = (props) => {
                             <p className="name">
                                 {props.product_name + '-' + props.colour_name + '-' + props.size_name}
                             </p>
-                            <img src={props.product_image} />
+                            <img src={props.product_image.replace("localhost:", `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`)} />
                         </td>
                         <td className="text-danger fw-bold col-price">
                             <p className='d-flex align-items-center justify-content-center'>
@@ -151,9 +151,6 @@ const ProductAdmin = (props) => {
                         </td>
                         <td className="col-createAt">
                             <p>{convertTime(props.created_at)}</p>
-                        </td>
-                        <td className="text-danger fw-bold col-state">
-                            <Switch checked={props.state} onChange={handleUpdateState} disabled={disabledInputState} />
                         </td>
                         <td className="col-action manipulation">
                             <Link href={`/product/update/${props.product_id}`}>

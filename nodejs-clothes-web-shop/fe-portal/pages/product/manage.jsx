@@ -67,7 +67,6 @@ const ProductManagementPage = () => {
                                 <th title='Giá sản phẩm' className="col-price">Giá</th>
                                 <th title='Tồn kho' className="col-quantity">Tồn kho</th>
                                 <th title="Thời gian tạo" className="col-createAt">Ngày tạo</th>
-                                <th title="Trạng thái" className="col-state">Trạng thái</th>
                                 <th title="Thao tác" className="col-action manipulation">Thao tác</th>
                             </tr>
                         </thead>
@@ -80,13 +79,12 @@ const ProductManagementPage = () => {
                                         key={index}
                                         product_id={productVariant.product_id}
                                         product_variant_id={productVariant.product_variant_id}
-                                        product_name={productVariant.product_name}
-                                        product_image={productVariant.product_image}
-                                        colour_name={productVariant.colour_name}
-                                        size_name={productVariant.size_name}
+                                        product_name={productVariant.name}
+                                        product_image={productVariant.productPicture}
+                                        colour_name={productVariant.colour}
+                                        size_name={productVariant.size}
                                         price={productVariant.price}
                                         quantity={productVariant.quantity}
-                                        state={productVariant.state}
                                         created_at={productVariant.created_at}
                                         refreshProductVariantTable={refreshProductVariantTable}
                                     />
