@@ -11,17 +11,17 @@ const CatalogManagementPage = () => {
         <div className='catalog-management-page'>
             <Header title="Quản lý danh mục" />
             <div className="row">
-                <div className="col-8">
+                <div className="col-12">
                     <CategoryManagement />
                 </div>
-                <div className="col-4">
+                {/* <div className="col-4">
                     <div>
                         <ColourManagement />
                     </div>
                     <div>
                         <SizeManagement />
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     )

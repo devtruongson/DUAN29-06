@@ -42,7 +42,7 @@ const Category = ({ setCategoryId, categoryName, setCategoryName }) => {
     useEffect(() => {
         const fetchCategory = async () => {
             try {
-                const result = await axios.get(`${homeAPI}/category/nest-list`);
+                const result = await axios.get(`${homeAPI}/category/list`);
                 setCategoryList(result.data)
             } catch (err) {
                 console.log(err);
@@ -54,17 +54,12 @@ const Category = ({ setCategoryId, categoryName, setCategoryName }) => {
     }, [])
 
     useEffect(() => {
-        let options = categoryList.map((categoryLevel1) => {
-            let categoryLevel2List = categoryLevel1.children
-            let options = categoryLevel2List.map((categoryLevel2) => {
-                let option = { label: categoryLevel2.title, value: categoryLevel2.category_id }
-                return option
-            })
-
+        let options = categoryList.map((cate) => {
             return {
-                label: categoryLevel1.title,
-                options: options
+                label: cate.name,
+                value: cate.categoryID
             }
+
         })
         setOptions(options)
     }, [categoryList])

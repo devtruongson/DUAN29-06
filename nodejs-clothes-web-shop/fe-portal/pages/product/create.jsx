@@ -24,6 +24,10 @@ const CreateProductPage = () => {
     const [sizeBoxValue, setSizeBoxValue] = useState([]);
     const [editorLoaded, setEditorLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [colorText, setColorText] = useState("");
+    const [sizeText, setSizeText] = useState("");
+    const [images, setImages] = useState([]);
+    const [previews, setPreviews] = useState([]);
 
     const [productVariantList, setProductVariantList] = useState([]);
     const [rowProductVariant, setRowProductVariant] = useState([]);
@@ -71,28 +75,26 @@ const CreateProductPage = () => {
             try {
                 setIsLoading(true)
                 let newProduct = {
-                    product_name: productName,
+                    name: productName,
                     price,
-                    category_id: categoryId,
-                    description
+                    categoryID: categoryId,
+                    description,
+                    productPictures: images
                 }
-                let result = await axios.post(`${homeAPI}/product/create`, newProduct);
-                console.log(result.data);
-                let product_id = result.data.product_id;
-                for (let productVariant of productVariantList) {
-                    let dataProductVariant = new FormData();
-                    dataProductVariant.append('product_id', product_id);
-                    dataProductVariant.append('colour_id', productVariant.colour_id);
-                    dataProductVariant.append('size_id', productVariant.size_id);
-                    dataProductVariant.append('quantity', productVariant.quantity);
-                    for (let file of productVariant.fileList)
-                        dataProductVariant.append('product_images', file.originFileObj);
+                let result = await axios.post(`${homeAPI}/product/create`, newProduct, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+                let product_id = result.data.productID;
+                if (true) {
                     let result = await axios.post(
-                        `${homeAPI}/product-variant/create`,
-                        dataProductVariant,
+                        `${homeAPI}/productVariant/create`,
                         {
-                            headers: { 'Content-Type': 'multipart/form-data' }
-                        }
+                            productID: product_id,
+                            Colour: colorText,
+                            Size: sizeText,
+                            quantity: 5,
+                        },
+
                     );
                     console.log(result.data);
                 }
@@ -122,8 +124,12 @@ const CreateProductPage = () => {
             swtoast.error({ text: 'Mô tả sản phẩm không được bỏ trống' })
             return false
         }
-        if (!productVariantList.length) {
-            swtoast.error({ text: 'Sản phẩm phải có ít nhất 1 biến thể' })
+        if (!colorText) {
+            swtoast.error({ text: 'Color sản phẩm không được bỏ trống' })
+            return false
+        }
+        if (!sizeText) {
+            swtoast.error({ text: 'Size sản phẩm không được bỏ trống' })
             return false
         }
         for (const productVariant of productVariantList) {
@@ -150,7 +156,25 @@ const CreateProductPage = () => {
         setColourBoxValue([])
         setSelectedSizes([])
         setSizeBoxValue([])
+        setSizeText("")
+        setColorText("")
     }
+
+
+
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        setImages(files);
+
+        const newPreviews = files.map(file => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviews(prevState => [...prevState, reader.result]);
+            };
+            reader.readAsDataURL(file);
+            return reader.result;
+        });
+    };
 
     return (
         <div className='create-product-page'>
@@ -203,39 +227,34 @@ const CreateProductPage = () => {
                 </div>
                 <div className="row">
                     <div className="col-6">
-                        <ColourBox
-                            selectedColours={selectedColours}
-                            setSelectedColours={setSelectedColours}
-                            colourBoxValue={colourBoxValue}
-                            setColourBoxValue={setColourBoxValue}
+                        <label htmlFor='product-color' className="fw-bold">Màu:</label>
+                        <Input
+                            id='product-color' placeholder='Nhập màu sản phẩm'
+                            value={colorText}
+                            onChange={(e) => setColorText(e.target.value)}
                         />
                     </div>
                     <div className="col-6">
-                        <SizeBox
-                            selectedSizes={selectedSizes}
-                            setSelectedSizes={setSelectedSizes}
-                            sizeBoxValue={sizeBoxValue}
-                            setSizeBoxValue={setSizeBoxValue}
+                        <label htmlFor='product-size' className="fw-bold">Size:</label>
+                        <Input
+                            id='product-name' placeholder='Nhập size sản phẩm'
+                            value={sizeText}
+                            onChange={(e) => setSizeText(e.target.value)}
                         />
                     </div>
                 </div>
-                {/* dung Selected colour va Seleted size de tao bang Product-Variant */}
-                <div>
-                    <label htmlFor='enter-name' className="fw-bold">Danh sách lựa chọn:</label>
-                    <table className="table w-100 table-hover align-middle table-bordered">
-                        <thead>
-                            <tr className='row-product-variant'>
-                                <th className='col-colour text-center' scope="col">Màu</th>
-                                <th className='col-size text-center' scope="col">Size</th>
-                                <th className='col-quantity text-center' scope="col">Tồn kho</th>
-                                <th className='col-image text-center' scope="col">Ảnh</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {rowProductVariant.length ? rowProductVariant : <tr><td colSpan={5}><Empty /></td></tr>}
-                        </tbody>
-                    </table>
+                <div className='mt-4'>
+                    <label htmlFor='product-file' className="fw-bold">Chọn ảnh:</label>
+                    <input type="file" id='product-file' accept="image/*" className='form-control' multiple onChange={handleImageChange} />
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {previews.map((preview, index) => (
+                            <div key={index} style={{ margin: '10px' }}>
+                                <img src={preview} alt={`Preview ${index}`} style={{ width: '200px', height: '200px', objectFit: 'cover' }} />
+                            </div>
+                        ))}
+                    </div>
                 </div>
+                {/* dung Selected colour va Seleted size de tao bang Product-Variant */}
                 <div className="btn-box text-left">
                     <button className='text-light bg-dark' onClick={createProduct}>
                         Thêm sản phẩm
