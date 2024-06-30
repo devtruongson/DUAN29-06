@@ -141,7 +141,7 @@ let update = async (req, res, next) => {
 
 let listAdminSide = async (req, res, next) => {
   let listProductVariant = await ProductVariant.findAll({
-    attributes: ['productVariantID', 'quantity', 'created_at', 'colour', 'size'],
+    attributes: ['productVariantID', 'quantity', 'created_at', 'Colour', 'Size'],
     include: [
       {
         model: Product, attributes: ['productID', 'name', 'price'],
