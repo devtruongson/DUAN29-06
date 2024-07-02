@@ -1,17 +1,27 @@
-import React, { useState, useRef } from 'react'
-import Link from 'next/link'
-import axios from 'axios'
+import React, { useState, useRef } from "react";
+import Link from "next/link";
+import axios from "axios";
 import { swalert, swtoast } from "@/mixins/swal.mixin";
 
 const OrderRow = (props) => {
-    const { order_id, state_id, state_name, created_at, total_order_value, refreshOrderTable } = props;
+    const {
+        orderID,
+        orderState,
+        state_name,
+        orderDate,
+        totalOrderValue,
+        refreshOrderTable,
+    } = props;
 
     const addPointToPrice = (price) => {
-        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
+        if (!price) {
+            return;
+        }
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    };
 
-    const convertTime = (created_at) => {
-        const date = new Date(created_at);
+    const convertTime = (orderDate) => {
+        const date = new Date(orderDate);
         const year = date.getFullYear();
         const month = date.getMonth() + 1; // tháng (giá trị từ 0 đến 11, nên cộng thêm 1)
         const day = date.getDate(); // ngày trong tháng
@@ -24,46 +34,77 @@ const OrderRow = (props) => {
             <>
                 {formattedDate} <br /> {formattedTime}
             </>
-        )
-    }
+        );
+    };
 
     const renderCancelOrderBtn = () => {
-        if (state_id == 1 || state_id == 2 || state_id == 3) {
+        if (
+            orderState == "Chờ xác nhận" ||
+            orderID == "Đã xác nhận" ||
+            "Đang giao hàng"
+        ) {
             return (
                 <>
-                    <br />
-                    <a className="text-danger" href="#" onClick={handleCancelOrder}>Hủy đơn hàng</a>
+                    <a
+                        className="text-white"
+                        href="#"
+                        onClick={handleCancelOrder}
+                        style={{ textDecoration: "none" }}
+                    >
+                        Hủy đơn hàng
+                    </a>
                 </>
-            )
+            );
         }
-    }
+    };
 
     const renderChangeStatusBtn = () => {
-        if (state_id == 1) {
+        if (orderState === "Chờ xác nhận") {
             return (
                 <>
-                    <a href="#" onClick={handleChangeStatus}>Xác nhận đơn hàng</a>
+                    <a
+                        href="#"
+                        onClick={handleChangeStatus}
+                        className="text-white"
+                        style={{ textDecoration: "none" }}
+                    >
+                        Xác nhận đơn hàng
+                    </a>
                     <br />
                 </>
-            )
+            );
         }
-        if (state_id == 2) {
+        if (orderState === "Đã xác nhận") {
             return (
                 <>
-                    <a href="#" onClick={handleChangeStatus}>Xác nhận đã bàn giao cho đơn vị vận chuyển</a>
+                    <a
+                        href="#"
+                        onClick={handleChangeStatus}
+                        className="text-white"
+                        style={{ textDecoration: "none" }}
+                    >
+                        Xác nhận đã bàn giao cho đơn vị vận chuyển
+                    </a>
                     <br />
                 </>
-            )
+            );
         }
-        if (state_id == 3) {
+        if (orderState === "Đang giao hàng") {
             return (
                 <>
-                    <a href="#" onClick={handleChangeStatus}>Xác nhận đã giao hàng thành công</a>
+                    <a
+                        href="#"
+                        onClick={handleChangeStatus}
+                        className="text-white"
+                        style={{ textDecoration: "none" }}
+                    >
+                        Xác nhận đã giao hàng thành công
+                    </a>
                     <br />
                 </>
-            )
+            );
         }
-    }
+    };
 
     const handleCancelOrder = () => {
         swalert
@@ -77,23 +118,27 @@ const OrderRow = (props) => {
             .then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        await axios.put('http://localhost:8080/api/order/change-status/' + order_id + '/6')
+                        await axios.put(
+                            "http://localhost:8080/api/order/changeStatus/" +
+                                orderID +
+                                "/Đã hủy"
+                        );
                         refreshOrderTable();
                         swtoast.success({
-                            text: 'Hủy đơn hàng thành công!'
-                        })
+                            text: "Hủy đơn hàng thành công!",
+                        });
                     } catch (err) {
-                        console.log(err)
+                        console.log(err);
                         swtoast.error({
-                            text: 'Xảy ra lỗi khi hủy đơn hàng vui lòng thử lại!'
-                        })
+                            text: "Xảy ra lỗi khi hủy đơn hàng vui lòng thử lại!",
+                        });
                     }
                 }
-            })
-    }
+            });
+    };
 
     const handleChangeStatus = () => {
-        if (state_id == 1) {
+        if (orderState == "Chờ xác nhận") {
             swalert
                 .fire({
                     title: "Xác nhận đơn hàng",
@@ -105,21 +150,25 @@ const OrderRow = (props) => {
                 .then(async (result) => {
                     if (result.isConfirmed) {
                         try {
-                            await axios.put('http://localhost:8080/api/order/change-status/' + order_id + '/2')
+                            await axios.put(
+                                "http://localhost:8080/api/order/changeStatus/" +
+                                    orderID +
+                                    "/Đã xác nhận"
+                            );
                             refreshOrderTable();
                             swtoast.success({
-                                text: 'Xác nhận đơn hàng thành công!'
-                            })
+                                text: "Xác nhận đơn hàng thành công!",
+                            });
                         } catch (err) {
-                            console.log(err)
+                            console.log(err);
                             swtoast.error({
-                                text: 'Xảy ra lỗi khi xác nhận đơn hàng vui lòng thử lại!'
-                            })
+                                text: "Xảy ra lỗi khi xác nhận đơn hàng vui lòng thử lại!",
+                            });
                         }
                     }
-                })
+                });
         }
-        if (state_id == 2) {
+        if (orderState == "Đã xác nhận") {
             swalert
                 .fire({
                     title: "Xác nhận đã bàn giao cho đơn vị vận chuyển",
@@ -131,21 +180,25 @@ const OrderRow = (props) => {
                 .then(async (result) => {
                     if (result.isConfirmed) {
                         try {
-                            await axios.put('http://localhost:8080/api/order/change-status/' + order_id + '/3')
+                            await axios.put(
+                                "http://localhost:8080/api/order/changeStatus/" +
+                                    orderID +
+                                    "/Đang giao hàng"
+                            );
                             refreshOrderTable();
                             swtoast.success({
-                                text: 'Xác nhận bàn giao cho đơn vị vận chuyển thành công!'
-                            })
+                                text: "Xác nhận bàn giao cho đơn vị vận chuyển thành công!",
+                            });
                         } catch (err) {
-                            console.log(err)
+                            console.log(err);
                             swtoast.error({
-                                text: 'Xảy ra lỗi khi xác nhận bàn giao vui lòng thử lại!'
-                            })
+                                text: "Xảy ra lỗi khi xác nhận bàn giao vui lòng thử lại!",
+                            });
                         }
                     }
-                })
+                });
         }
-        if (state_id == 3) {
+        if (orderState == "Đang giao hàng") {
             swalert
                 .fire({
                     title: "Xác nhận đã giao hàng thành công",
@@ -157,21 +210,25 @@ const OrderRow = (props) => {
                 .then(async (result) => {
                     if (result.isConfirmed) {
                         try {
-                            await axios.put('http://localhost:8080/api/order/change-status/' + order_id + '/4')
+                            await axios.put(
+                                "http://localhost:8080/api/order/changeStatus/" +
+                                    orderID +
+                                    "/Đã giao"
+                            );
                             refreshOrderTable();
                             swtoast.success({
-                                text: 'Xác nhận đã giao thành công!'
-                            })
+                                text: "Xác nhận đã giao thành công!",
+                            });
                         } catch (err) {
-                            console.log(err)
+                            console.log(err);
                             swtoast.error({
-                                text: 'Xảy ra lỗi khi xác nhận đã giao vui lòng thử lại!'
-                            })
+                                text: "Xảy ra lỗi khi xác nhận đã giao vui lòng thử lại!",
+                            });
                         }
                     }
-                })
+                });
         }
-    }
+    };
 
     return (
         <div className="table-responsive">
@@ -180,34 +237,84 @@ const OrderRow = (props) => {
                     <tr className="w-100">
                         <td className="fw-bold col-order-id">
                             <p className="d-flex align-items-center justify-content-center">
-                                #{order_id}
+                                #{orderID}
                             </p>
                         </td>
                         <td className="text-danger fw-bold col-state">
                             <p className="d-flex align-items-center justify-content-center">
-                                {state_name}
+                                {orderState}
                             </p>
                         </td>
                         <td className="col-create-at">
                             <p className="d-flex align-items-center justify-content-center">
-                                {convertTime(created_at)}
+                                {convertTime(orderDate)}
                             </p>
                         </td>
                         <td className="text-danger fw-bold col-total-value">
-                            <p>
-                                {addPointToPrice(total_order_value)}
-                            </p>
+                            <p>{addPointToPrice(totalOrderValue)}</p>
                         </td>
                         <td className="col-action manipulation">
-                            {renderChangeStatusBtn()}
-                            <Link href={`/order/detail/${order_id}`}>Xem chi tiết</Link>
-                            {renderCancelOrderBtn()}
+                            {orderState === "Đã hủy" ||
+                            orderState === "Đã giao" ? (
+                                <></>
+                            ) : (
+                                <button
+                                    style={{
+                                        margin: "4px 0",
+                                        width: "100%",
+                                        padding: "8px",
+                                        borderRadius: "5px",
+                                        background: "blue",
+                                        border: "none",
+                                        color: "#fff",
+                                        textDecoration: "none",
+                                    }}
+                                >
+                                    {renderChangeStatusBtn()}
+                                </button>
+                            )}
+
+                            <Link
+                                href={`/order/detail/${orderID}`}
+                                style={{ textDecoration: "none" }}
+                            >
+                                <button
+                                    style={{
+                                        margin: "4px 0",
+                                        width: "100%",
+                                        padding: "8px",
+                                        borderRadius: "5px",
+                                        background: "blue",
+                                        border: "none",
+                                        color: "#fff",
+                                    }}
+                                >
+                                    Xem chi tiết
+                                </button>
+                            </Link>
+                            {orderState === "Đã hủy" ? (
+                                <></>
+                            ) : (
+                                <button
+                                    style={{
+                                        margin: "4px 0",
+                                        width: "100%",
+                                        padding: "8px",
+                                        borderRadius: "5px",
+                                        background: "blue",
+                                        border: "none",
+                                        color: "#fff",
+                                    }}
+                                >
+                                    {renderCancelOrderBtn()}
+                                </button>
+                            )}
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-    )
-}
+    );
+};
 
-export default OrderRow
+export default OrderRow;
