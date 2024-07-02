@@ -67,8 +67,9 @@ const Register = (props) => {
             });
             props.toClose();
         } catch (error) {
+            console.log(error);
             swtoast.error({
-                text: error.response?.data?.message
+                text: error.response?.data
             });
         }
     }

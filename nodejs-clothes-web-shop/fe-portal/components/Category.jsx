@@ -60,7 +60,7 @@ const Category = ({ setCategoryId, categoryName, setCategoryName }) => {
                 value: cate.categoryID
             }
 
-        })
+        });
         setOptions(options)
     }, [categoryList])
 

@@ -7,9 +7,6 @@ let router = express.Router();
 
 router.post('/create', ProductVariantController.create);
 
-
-
-
 router.put('/update-quantity', ProductVariantController.updateQuantity);
 
 router.delete('/delete/:productVariantID', ProductVariantController.deleteProductVariant);

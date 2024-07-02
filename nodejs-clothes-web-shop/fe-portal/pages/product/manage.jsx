@@ -100,9 +100,9 @@ const ProductManagementPage = () => {
                             return (
                                 <ProductAdmin
                                     key={index}
-                                    product_id={productVariant.product_id}
+                                    product_id={productVariant.productID}
                                     product_variant_id={
-                                        productVariant.product_variant_id
+                                        productVariant.productVariantID
                                     }
                                     product_name={productVariant.name}
                                     product_image={

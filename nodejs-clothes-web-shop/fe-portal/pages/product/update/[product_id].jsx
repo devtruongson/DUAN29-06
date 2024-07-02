@@ -1,100 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Router from 'next/router';
 import { Input, InputNumber, Empty } from 'antd'
 
 import Header from '@/components/Header';
 import Category from '@/components/Category';
+import ColourBox from '@/components/CreateProductPage/ColourBox';
+import SizeBox from '@/components/CreateProductPage/SizeBox';
 import CKeditor from '@/components/CKEditor';
-import RowProductVariant from '@/components/UpdateProductPage/RowProductVariant';
+import RowProductVariant from '@/components/CreateProductPage/RowProductVariant';
 import Loading from '@/components/Loading';
 import { swtoast } from "@/mixins/swal.mixin";
 import { homeAPI } from '@/config'
+import { Router, useRouter } from 'next/router';
 
-const fakeProductDetail = {
-    product_id: 1,
-    product_name: 'Áo Nam Active Pro',
-    category_id: 3,
-    category_name: 'Áo T-Shirt',
-    price: 179000,
-    description: '<h1>Đây là một cái áo<h1>',
-    product_variant_list: [
-        {
-            product_variant_id: 1,
-            colour_id: 1,
-            colour_name: 'Trắng',
-            size_id: 1,
-            size_name: 'S',
-            quantity: 4,
-            product_images: [
-                { path: 'http://localhost:8080/static/images/35bd44e7-3969-4a28-9c32-077b9f85162c.jpg' },
-                { path: 'http://localhost:8080/static/images/35bd44e7-3969-4a28-9c32-077b9f85162c.jpg' },
-                { path: 'http://localhost:8080/static/images/35bd44e7-3969-4a28-9c32-077b9f85162c.jpg' },
-            ]
-        },
-        {
-            product_variant_id: 2,
-            colour_id: 2,
-            colour_name: 'Đen',
-            size_id: 2,
-            size_name: 'M',
-            quantity: 13,
-            product_images: [
-                { path: 'http://localhost:8080/static/images/35bd44e7-3969-4a28-9c32-077b9f85162c.jpg' },
-                { path: 'http://localhost:8080/static/images/35bd44e7-3969-4a28-9c32-077b9f85162c.jpg' },
-                { path: 'http://localhost:8080/static/images/35bd44e7-3969-4a28-9c32-077b9f85162c.jpg' },
-            ]
-        },
-    ]
-}
-
-const UpdateProductPage = () => {
-    const { product_id } = Router.query
-
-    const [productId, setProductId] = useState('');
+const UpdateProduct = () => {
     const [productName, setProductName] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [categoryName, setCategoryName] = useState('');
     const [price, setPrice] = useState(0);
     const [description, setDescription] = useState('')
+    const [selectedColours, setSelectedColours] = useState([]);
+    const [colourBoxValue, setColourBoxValue] = useState([]);
+    const [selectedSizes, setSelectedSizes] = useState([]);
+    const [sizeBoxValue, setSizeBoxValue] = useState([]);
     const [editorLoaded, setEditorLoaded] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [colorText, setColorText] = useState("");
+    const [sizeText, setSizeText] = useState("");
+    const [images, setImages] = useState([]);
+    const [productID, setProductID] = useState(-1);
+    const [previews, setPreviews] = useState([]);
+    const [listImage, setListImage] = useState([]);
 
     const [productVariantList, setProductVariantList] = useState([]);
     const [rowProductVariant, setRowProductVariant] = useState([]);
+
+    const router = useRouter();
+
+    const { product_id } = router.query;
+
+    useEffect(() => {
+        const fetch = async () => {
+            try {
+                const res = await axios.get(`${homeAPI}/product/admin/detail/${product_id}`)
+                if (res.data) {
+                    setProductName(res.data.name)
+                    setCategoryId(res.data.categoryID)
+                    setPrice(res.data.price)
+                    setCategoryName(res.data.CategoryName)
+                    setDescription(res.data.description)
+                    setProductID(res.data.productID)
+                    setColorText(res.data.productVariantList[0].colour)
+                    setSizeText(res.data.productVariantList[0].size)
+                    setPreviews(res?.data?.productPictures?.map(item => item.path.replace(item.path.split("/")[2], `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`)))
+                    setListImage(res?.data?.productPictures?.map(item => item.path.replace(item.path.split("/")[2], `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`)))
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetch();
+    }, [])
 
     useEffect(() => {
         setEditorLoaded(true);
     }, []);
 
     useEffect(() => {
-        const getProductDetail = async () => {
-            try {
-                setIsLoading(true)
-                const result = await axios.get(`${homeAPI}/product/admin/detail/${product_id}`)
-                setProductId(result.data.product_id)
-                setProductName(result.data.product_name)
-                setCategoryId(result.data.category_id)
-                setCategoryName(result.data.category_name)
-                setPrice(result.data.price)
-                setDescription(result.data.description)
-                setProductVariantList(await convertProductVariantList(result.data.product_variant_list))
-                setIsLoading(false)
-            } catch (err) {
-                console.log(err);
-                setIsLoading(false)
-                Router.push("/404")
-                setProductId(fakeProductDetail.product_id)
-                setProductName(fakeProductDetail.product_name)
-                setCategoryId(fakeProductDetail.category_id)
-                setCategoryName(fakeProductDetail.category_name)
-                setPrice(fakeProductDetail.price)
-                setDescription(fakeProductDetail.description)
-                setProductVariantList(await convertProductVariantList(fakeProductDetail.product_variant_list))
+        let productVariantListTemp = [];
+        for (let i in selectedColours) {
+            for (let y in selectedSizes) {
+                let productVariant = {
+                    colour_id: selectedColours[i].colour_id,
+                    colour_name: selectedColours[i].colour_name,
+                    size_id: selectedSizes[y].size_id,
+                    size_name: selectedSizes[y].size_name,
+                    quantity: '',
+                    fileList: []
+                }
+                productVariantListTemp.push(productVariant);
             }
         }
-        if (product_id) getProductDetail()
-    }, [product_id]);
+        setProductVariantList(productVariantListTemp);
+
+    }, [selectedColours, selectedSizes]);
 
     useEffect(() => {
         let rowProductVariantTemp = [];
@@ -105,101 +94,33 @@ const UpdateProductPage = () => {
                     index={i}
                     productVariantList={productVariantList}
                     setProductVariantList={setProductVariantList}
-                    setIsLoading={setIsLoading}
-                    refreshPage={refreshPage}
                 />
             );
         }
         setRowProductVariant(rowProductVariantTemp);
     }, [productVariantList]);
 
-    const convertProductVariantList = async (productVariantList) => {
-        let productVariantListTemp = []
-        for (let productVariant of productVariantList) {
-            let productImages = productVariant.product_images
-            let fileList = []
-            for (let { path } of productImages) {
-                try {
-                    let name = path.slice(-40, -4)
-                    let response = await fetch(path)
-                    let blob = await response.blob();
-                    const file = new File([blob], name, { type: blob.type });
-                    fileList.push({
-                        uid: name,
-                        name: name,
-                        url: path,
-                        originFileObj: file
-                    })
-                } catch (err) {
-                    console.log(err)
-                }
-            }
-            productVariantListTemp.push({
-                productVariantId: productVariant.product_variant_id,
-                colourId: productVariant.colour_id,
-                colourName: productVariant.colour_name,
-                sizeId: productVariant.size_id,
-                sizeName: productVariant.size_name,
-                quantity: productVariant.quantity,
-                fileList
-            })
-        }
-
-        return productVariantListTemp
-    }
-
-    const refreshPage = async () => {
-        if (product_id) {
-            try {
-                const result = await axios.get(`${homeAPI}/product/admin/detail/${product_id}`)
-                setProductId(result.data.product_id)
-                setProductName(result.data.product_name)
-                setCategoryId(result.data.category_id)
-                setCategoryName(result.data.category_name)
-                setPrice(result.data.price)
-                setDescription(result.data.description)
-                setProductVariantList(await convertProductVariantList(result.data.product_variant_list))
-            } catch (err) {
-                console.log(err);
-                Router.push("/404")
-            }
-        }
-    }
-
-    const updateProduct = async () => {
+    const createProduct = async () => {
         if (Validate()) {
             try {
                 setIsLoading(true)
-                let updateProduct = {
-                    product_id: productId,
-                    product_name: productName,
-                    category_id: categoryId,
+                let newProduct = {
+                    productID: productID,
+                    name: productName,
                     price,
-                    description
+                    categoryID: categoryId,
+                    description,
+                    productPictures: images,
+                    listImages: listImage
                 }
-                let result = await axios.put(`${homeAPI}/product/update`, updateProduct);
-                console.log(result.data);
-                for (let productVariant of productVariantList) {
-                    let dataProductVariant = new FormData();
-                    dataProductVariant.append('product_variant_id', productVariant.productVariantId);
-                    dataProductVariant.append('quantity', productVariant.quantity);
-                    for (let file of productVariant.fileList)
-                        dataProductVariant.append('product_images', file.originFileObj);
-                    let rsult = await axios.put(
-                        `${homeAPI}/product-variant/update`,
-                        dataProductVariant,
-                        {
-                            headers: { 'Content-Type': 'multipart/form-data' }
-                        }
-                    );
-                    console.log(rsult.data);
-                }
+                let result = await axios.put(`${homeAPI}/product/update`, newProduct, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+
                 setIsLoading(false)
-                swtoast.success({ text: 'Cập nhập sản phẩm thành công!' })
-                refreshPage()
+                swtoast.success({ text: 'Sửa sản phẩm thành công!' })
             } catch (err) {
                 console.log(err);
-                setIsLoading(false)
             }
         }
     }
@@ -221,8 +142,12 @@ const UpdateProductPage = () => {
             swtoast.error({ text: 'Mô tả sản phẩm không được bỏ trống' })
             return false
         }
-        if (!productVariantList.length) {
-            swtoast.error({ text: 'Sản phẩm phải có ít nhất 1 biến thể' })
+        if (!colorText) {
+            swtoast.error({ text: 'Color sản phẩm không được bỏ trống' })
+            return false
+        }
+        if (!sizeText) {
+            swtoast.error({ text: 'Size sản phẩm không được bỏ trống' })
             return false
         }
         for (const productVariant of productVariantList) {
@@ -238,12 +163,44 @@ const UpdateProductPage = () => {
         return true
     }
 
+    const clearPage = () => {
+        setProductName('')
+        setCategoryId('')
+        setCategoryName('')
+        setPrice(0)
+        setDescription('')
+        setProductVariantList([])
+        setSelectedColours([])
+        setColourBoxValue([])
+        setSelectedSizes([])
+        setSizeBoxValue([])
+        setSizeText("")
+        setColorText("")
+    }
 
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        setImages(files);
+
+        const newPreviews = files.map(file => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviews(prevState => [...prevState, reader.result]);
+            };
+            reader.readAsDataURL(file);
+            return reader.result;
+        });
+    };
+
+    const handleDeleteImage = (link) => {
+        setListImage(prev => prev.filter(image => image !== link))
+        setPreviews(prev => prev.filter(image => image !== link))
+    }
 
     return (
-        <div className='update-product-page'>
-            <Header title="Cập nhật sản phẩm" />
-            <div className="update-product-form">
+        <div className='create-product-page'>
+            <Header title="Chỉnh sửa sản phẩm" />
+            <div className="create-product-form">
                 {/* // Input Ten san pham */}
                 <div className="row">
                     <div className="col-6">
@@ -289,33 +246,55 @@ const UpdateProductPage = () => {
                         />
                     </div>
                 </div>
-                {/* dung Selected colour va Seleted size de tao bang Product-Variant */}
-                <div>
-                    <label htmlFor='enter-name' className="fw-bold">Danh sách lựa chọn:</label>
-                    <table className="table w-100 table-hover align-middle table-bordered">
-                        <thead>
-                            <tr className='row-product-variant'>
-                                <th className='col-colour text-center' scope="col">Màu</th>
-                                <th className='col-size text-center' scope="col">Size</th>
-                                <th className='col-quantity text-center' scope="col">Tồn kho</th>
-                                <th className='col-image text-center' scope="col">Ảnh</th>
-                                <th className='col-delete text-center' scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {rowProductVariant.length ? rowProductVariant : <tr><td colSpan={5}><Empty /></td></tr>}
-                        </tbody>
-                    </table>
+                <div className="row">
+                    <div className="col-6">
+                        <label htmlFor='product-color' className="fw-bold">Màu:</label>
+                        <Input
+                            disabled
+                            id='product-color' placeholder='Nhập màu sản phẩm'
+                            value={colorText}
+                            onChange={(e) => setColorText(e.target.value)}
+                        />
+                    </div>
+                    <div className="col-6">
+                        <label htmlFor='product-size' className="fw-bold">Size:</label>
+                        <Input
+                            disabled
+                            id='product-name' placeholder='Nhập size sản phẩm'
+                            value={sizeText}
+                            onChange={(e) => setSizeText(e.target.value)}
+                        />
+                    </div>
                 </div>
+                <div className='mt-4'>
+                    <label htmlFor='product-file' className="fw-bold">Chọn ảnh:</label>
+                    <input type="file" id='product-file' accept="image/*" className='form-control' multiple onChange={handleImageChange} />
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+
+                        {previews.map((preview, index) => (
+                            <div key={index} style={{ margin: '10px', position: 'relative' }}>
+                                <button style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    right: 0,
+                                }} className='btn btn-primary' onClick={() => handleDeleteImage(preview)}>
+                                    Xóa
+                                </button>
+                                <img src={preview} alt={`Preview ${index}`} style={{ width: '200px', height: '200px', objectFit: 'cover' }} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                {/* dung Selected colour va Seleted size de tao bang Product-Variant */}
                 <div className="btn-box text-left">
-                    <button className='text-light bg-dark' onClick={updateProduct}>
-                        Cập nhật sản phẩm
+                    <button className='text-light bg-dark' onClick={createProduct}>
+                        Chỉnh sửa sản phẩm
                     </button>
                 </div>
             </div>
             {isLoading && <Loading />}
-        </div>
+        </div >
     )
 }
 
-export default UpdateProductPage
+export default UpdateProduct

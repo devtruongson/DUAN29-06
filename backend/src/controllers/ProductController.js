@@ -121,9 +121,9 @@ let update = async (req, res, next) => {
                 const filePath = path.join(directoryPath, fileName);
 
                 // Xóa file ảnh trên ổ đĩa
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
-                }
+                // if (fs.existsSync(filePath)) {
+                //     fs.unlinkSync(filePath);
+                // }
                 // Xóa bản ghi ảnh trong database
                 await ProductPicture.destroy({ where: { productPictureID } }); // Sử dụng productPictureID
             }
@@ -140,6 +140,15 @@ let update = async (req, res, next) => {
                     await ProductPicture.create({
                         path,
                         productID: productID, // Liên kết hình ảnh với productID
+                    });
+                }
+            }
+
+            if (req.body.listImages) {
+                for (let image of req.body.listImages) {
+                    await ProductPicture.create({
+                        path: image,
+                        productID: productID // Liên kết hình ảnh với productID
                     });
                 }
             }
@@ -409,9 +418,9 @@ let detailAdminSide = async (req, res, next) => {
                     return {
                         productVariantID: productVariant.productVariantID,
 
-                        colour: productVariant.colour,
+                        colour: productVariant.Colour,
 
-                        size: productVariant.size,
+                        size: productVariant.Size,
                         quantity: productVariant.quantity,
                     };
                 }

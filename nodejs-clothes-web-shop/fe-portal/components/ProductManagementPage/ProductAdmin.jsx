@@ -45,9 +45,9 @@ const ProductAdmin = (props) => {
         if (newQuantity) {
             try {
                 await axios.put(
-                    "http://localhost:8080/api/product-variant/update-quantity",
+                    "http://localhost:8080/api/productVariant/update-quantity",
                     {
-                        product_variant_ids: [props.product_variant_id],
+                        productVariantID: props.product_variant_id,
                         quantity: newQuantity,
                     }
                 );
@@ -77,7 +77,6 @@ const ProductAdmin = (props) => {
                 setDisabledInputState(false);
                 props.refreshProductVariantTable();
             } catch (e) {
-                console.log(e);
                 props.refreshProductVariantTable();
                 setDisabledInputState(false);
                 swtoast.error({
@@ -117,14 +116,8 @@ const ProductAdmin = (props) => {
                 if (result.isConfirmed) {
                     try {
                         await axios.delete(
-                            "http://localhost:8080/api/product-variant/delete",
-                            {
-                                data: {
-                                    product_variant_ids: [
-                                        props.product_variant_id,
-                                    ],
-                                },
-                            }
+                            "http://localhost:8080/api/productVariant/delete/" +
+                                props.product_variant_id
                         );
                         props.refreshProductVariantTable();
                         swtoast.success({

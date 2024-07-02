@@ -26,7 +26,7 @@ const ProductItem = (props) => {
             >
                 <div className="product-thumbnails position-relative">
                     <Image
-                        className="img"
+                        className="img img_product-thumbnails"
                         src={props?.img?.replace(
                             props?.img.split("/")[2],
                             `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`
@@ -67,7 +67,7 @@ const ProductItem = (props) => {
                         query: { colour: props.colour_id },
                     }}
                 >
-                    <h6>{props.name}</h6>
+                    <h3 className="product_name_item">{props.name}</h3>
                 </Link>
                 <p className="d-flex justify-content-start align-items-center">
                     <span
