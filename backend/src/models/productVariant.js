@@ -6,10 +6,9 @@ const Product = require('./product');
 
 const ProductVariant = sequelize.define('productVariant', {
 	productVariantID: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-	Colour: {type:DataTypes.STRING, allowNull:false},
-	Size: {type:DataTypes.STRING, allowNull:false},
+	Colour: { type: DataTypes.STRING, allowNull: false },
+	Size: { type: DataTypes.STRING, allowNull: false },
 	quantity: { type: DataTypes.INTEGER, defaultValue: 0 },
-	
 }, {
 	timestamps: true,
 	createdAt: 'created_at',

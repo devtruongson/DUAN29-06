@@ -44,9 +44,6 @@ const CollectionPage = () => {
                                     colour_id={product.productVariants.Colour}
                                     sizes={product.productVariants.Size}
                                     rating={product.rating}
-                                    feedback_quantity={
-                                        product.feedback_quantity
-                                    }
                                 />
                             </div>
                         );

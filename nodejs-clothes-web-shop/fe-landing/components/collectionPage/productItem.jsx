@@ -80,13 +80,6 @@ const ProductItem = (props) => {
                         className="d-flex justify-content-start align-items-center"
                         style={{ color: "orange" }}
                     />
-                    <span style={{ marginLeft: "20px" }}>Hàng trong kho</span>
-                    <span
-                        className="feedback_quantity text-primary d-flex justify-content-start align-items-center"
-                        style={{ marginLeft: "4px" }}
-                    >
-                        ⟮{props.feedback_quantity}⟯
-                    </span>
                 </p>
                 <div className="d-flex justify-content-start">
                     <p className="price-after text-danger fw-bold">

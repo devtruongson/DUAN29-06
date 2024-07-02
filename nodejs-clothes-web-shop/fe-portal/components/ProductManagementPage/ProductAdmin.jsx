@@ -117,7 +117,7 @@ const ProductAdmin = (props) => {
                     try {
                         await axios.delete(
                             "http://localhost:8080/api/productVariant/delete/" +
-                                props.product_variant_id
+                            props.product_variant_id
                         );
                         props.refreshProductVariantTable();
                         swtoast.success({
@@ -152,7 +152,7 @@ const ProductAdmin = (props) => {
                             >
                                 <img
                                     src={props.product_image.replace(
-                                        "localhost:",
+                                        props.product_image.split("/")[2],
                                         `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`
                                     )}
                                     style={{
