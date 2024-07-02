@@ -47,10 +47,8 @@ const FeedbackBox = ({ productId }) => {
                         <FeedbackItem
                             key={index}
                             customer={feedback.customer}
-                            rate={feedback.rate}
-                            colour={feedback.colour}
-                            size={feedback.size}
-                            content={feedback.content}
+                            rate={feedback.rating}
+                            content={feedback.comment}
                             createdAt={feedback.created_at}
                         />
                     );

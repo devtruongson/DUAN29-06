@@ -14,7 +14,7 @@ const Order = (props) => {
         orderState,
         setIsCreateFeedbackModalOpen,
         setIsUpdateFeedbackModalOpen,
-        setProductVariantIdForFeedBack
+        setProductId,
     } = props;
 
     return (
@@ -32,6 +32,7 @@ const Order = (props) => {
                 {orderItems &&
                     orderItems.map((orderItem, index) => (
                         <OrderItem
+                            productID={orderItem.productID}
                             key={index}
                             productVariantId={orderItem.product_variant_id}
                             name={orderItem.name}
@@ -41,10 +42,10 @@ const Order = (props) => {
                             colour={orderItem.colour}
                             size={orderItem.size}
                             price={orderItem.price}
-                            hasFeedback={orderItem.has_feedback}
+                            hasFeedback={orderItem.hasReview}
                             setIsCreateFeedbackModalOpen={setIsCreateFeedbackModalOpen}
                             setIsUpdateFeedbackModalOpen={setIsUpdateFeedbackModalOpen}
-                            setProductVariantIdForFeedB ack={setProductVariantIdForFeedBack}
+                            setProductId={setProductId}
                         />
                     ))}
             </div>

@@ -6,32 +6,32 @@ import { swtoast } from '@/mixins/swal.mixin';
 import feedbackService from '@/services/feedbackService';
 
 const UpdateFeedbackModal = (props) => {
-    const { isOpen, setIsOpen, productVariantId, setProductVariantId, refreshOrderList } = props;
+    const { isOpen, setIsOpen, productID, setProductID, refreshOrderList } = props;
     const [feedbackId, setFeedbackId] = useState('');
     const [rate, setRate] = useState(0);
     const [content, setContent] = useState('');
 
     const handleCancel = (e) => {
         e.preventDefault();
-        setProductVariantId(null);
+        setProductID(null);
         setIsOpen(false);
     };
 
     const handleUpdateFeedback = async () => {
         try {
             const feedback = {
-                feedback_id: feedbackId,
-                rate,
-                content
+                reviewID: feedbackId,
+                rating: rate,
+                comment: content
             };
             await feedbackService.update(feedback);
             swtoast.success({ text: 'Sửa đánh giá thành công' });
-            setProductVariantId(null);
+            setProductID(null);
             setIsOpen(false);
             refreshOrderList();
         } catch (err) {
             console.log(err);
-            setProductVariantId(null);
+            setProductID(null);
             setIsOpen(false);
             swtoast.error({ text: 'Có lỗi khi sửa đánh giá vui lòng thử lại!' });
         }
@@ -40,19 +40,19 @@ const UpdateFeedbackModal = (props) => {
     useEffect(() => {
         const getFeedback = async () => {
             try {
-                const response = await feedbackService.getFeedBackDetail(productVariantId)
-                setFeedbackId(response.data.feedback_id);
-                setRate(response.data.rate);
-                setContent(response.data.content);
+                const response = await feedbackService.getFeedBackDetail(productID)
+                setFeedbackId(response.data.reviewID);
+                setRate(response.data.rating);
+                setContent(response.data.comment);
             } catch (err) {
                 console.log(err);
-                setProductVariantId(null);
+                setProductID(null);
                 setIsOpen(false);
                 swtoast.error({ text: 'Có lỗi khi tải đánh giá vui lòng thử lại!' });
             }
         };
         getFeedback();
-    }, [productVariantId, setIsOpen, setProductVariantId]);
+    }, [productID, setIsOpen, setProductID]);
 
     return (
         <Modal

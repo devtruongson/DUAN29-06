@@ -13,7 +13,6 @@ const FeedbackItem = (props) => {
                 <div className="feedback-content-container col-9">
                     <div className="d-flex align-items-start flex-column">
                         <div className="feedback-user-name">{customer}</div>
-                        <div className="feedback-colour">{`${colour} / ${size}`}</div>
                         <div className="feedback-content mt-auto align-self-start">{content}</div>
                         <div className="feedback-date">{formatDate(createdAt)}</div>
                     </div>

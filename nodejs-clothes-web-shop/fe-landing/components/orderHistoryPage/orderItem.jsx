@@ -16,18 +16,21 @@ const OrderItem = (props) => {
         hasFeedback,
         setIsCreateFeedbackModalOpen,
         setIsUpdateFeedbackModalOpen,
-        setProductVariantIdForFeedBack
+        setProductId,
+        productID
     } = props;
+
+    console.log(productID)
 
     const showCreateFeedbackModal = (e) => {
         e.preventDefault();
-        setProductVariantIdForFeedBack(productVariantId);
+        setProductId(productID);
         setIsCreateFeedbackModalOpen(true);
     };
 
     const showUpdateFeedbackModal = (e) => {
         e.preventDefault();
-        setProductVariantIdForFeedBack(productVariantId);
+        setProductId(productID);
         setIsUpdateFeedbackModalOpen(true);
     };
 
@@ -36,13 +39,17 @@ const OrderItem = (props) => {
             if (hasFeedback)
                 return (
                     <div onClick={showUpdateFeedbackModal} className="feedback-btn border-radius">
-                        <span>Sửa đánh giá</span>
+                        <span style={{
+                            whiteSpace: 'nowrap'
+                        }}>Sửa đánh giá</span>
                     </div>
                 );
             else
                 return (
                     <div onClick={showCreateFeedbackModal} className="feedback-btn border-radius">
-                        <span>Đánh giá sản phẩm</span>
+                        <span style={{
+                            whiteSpace: 'nowrap'
+                        }}>Đánh giá sản phẩm</span>
                     </div>
                 );
     };

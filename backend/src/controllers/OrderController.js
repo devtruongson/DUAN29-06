@@ -240,6 +240,7 @@ let listCustomerSide = async (req, res, next) => {
                 })
 
                 orderItemList.push({
+                    productID: product.productID,
                     productVariantID: productVariant.productVariantID,
                     name: product.name,
                     image: image ? image.path : null, // Xử lý trường hợp không có ảnh

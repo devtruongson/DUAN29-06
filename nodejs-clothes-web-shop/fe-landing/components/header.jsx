@@ -74,53 +74,17 @@ const Header = () => {
                     </li>
 
                     {categoryList &&
-                        categoryList.map((categoryLevel1, index) => {
+                        categoryList.map((category, index) => {
                             return (
                                 <li
                                     className="menu-item fw-bold text-uppercase position-relative"
                                     key={index}
                                 >
-                                    <Link
-                                        href={{
-                                            pathname: "collections",
-                                            query: {
-                                                category:
-                                                    categoryLevel1.categoryID,
-                                            },
-                                        }}
-                                        className="d-flex align-items-center"
+                                    <a
+                                        href={`/collections?category=${category.categoryID}`}
                                     >
-                                        {categoryLevel1.name}
-                                        {/* <span>
-                                            <FaAngleDown />
-                                        </span> */}
-                                    </Link>
-                                    <ul className="sub-menu position-absolute">
-                                        {categoryLevel1.children &&
-                                            categoryLevel1.children.map(
-                                                (category, index) => {
-                                                    return (
-                                                        <li
-                                                            key={index}
-                                                            className="w-100"
-                                                        >
-                                                            <Link
-                                                                href={{
-                                                                    pathname:
-                                                                        "/collections",
-                                                                    query: {
-                                                                        category:
-                                                                            category.category_id,
-                                                                    },
-                                                                }}
-                                                            >
-                                                                {category.name}
-                                                            </Link>
-                                                        </li>
-                                                    );
-                                                }
-                                            )}
-                                    </ul>
+                                        {category.name}
+                                    </a>
                                 </li>
                             );
                         })}

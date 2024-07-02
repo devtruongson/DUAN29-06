@@ -6,31 +6,31 @@ import { swtoast } from '@/mixins/swal.mixin';
 import feedbackService from '@/services/feedbackService';
 
 const CreateFeedbackModal = (props) => {
-    const { isOpen, setIsOpen, productVariantId, setProductVariantId, refreshOrderList } = props;
+    const { isOpen, setIsOpen, productID, setProductID, refreshOrderList } = props;
     const [rate, setRate] = useState(0);
     const [content, setContent] = useState('');
 
     const handleCancel = (e) => {
         e.preventDefault();
-        setProductVariantId(null);
+        setProductID(null);
         setIsOpen(false);
     };
 
     const handleCreateFeedback = async () => {
         try {
             const feedback = {
-                product_variant_id: productVariantId,
-                rate,
-                content
+                productID: productID,
+                rating: rate,
+                comment: content
             };
             await feedbackService.create(feedback);
             swtoast.success({ text: 'Tạo đánh giá thành công' });
-            setProductVariantId(null);
+            setProductID(null);
             setIsOpen(false);
             refreshOrderList();
         } catch (err) {
             console.log(err);
-            setProductVariantId(null);
+            setProductID(null);
             setIsOpen(false);
             swtoast.error({ text: 'Có lỗi khi tạo đánh giá vui lòng thử lại!' });
         }

@@ -68,7 +68,7 @@ import useCustomerStore from '@/store/customerStore';
 const OrderHistoryPage = () => {
     const customerId = useCustomerStore((state) => state.customerInfor?.customerID);
     const [orderList, setOrderList] = useState([]);
-    const [productVariantIdForFeedBack, setProductVariantIdForFeedBack] = useState(null);
+    const [productID, setProductID] = useState(null);
     const [isCreateFeedbackModalOpen, setIsCreateFeedbackModalOpen] = useState(false);
     const [isUpdateFeedbackModalOpen, setIsUpdateFeedbackModalOpen] = useState(false);
 
@@ -126,8 +126,8 @@ const OrderHistoryPage = () => {
                                             createdAt={order.createdAt}
                                             setIsCreateFeedbackModalOpen={setIsCreateFeedbackModalOpen}
                                             setIsUpdateFeedbackModalOpen={setIsUpdateFeedbackModalOpen}
-                                            setProductVariantIdForFeedBack={
-                                                setProductVariantIdForFeedBack
+                                            setProductId={
+                                                setProductID
                                             }
                                         />
                                     );
@@ -139,8 +139,8 @@ const OrderHistoryPage = () => {
                         <CreateFeedbackModal
                             isOpen={isCreateFeedbackModalOpen}
                             setIsOpen={setIsCreateFeedbackModalOpen}
-                            productVariantId={productVariantIdForFeedBack}
-                            setProductVariantId={setProductVariantIdForFeedBack}
+                            productID={productID}
+                            setProductID={setProductID}
                             refreshOrderList={refreshOrderList}
                         />
                     )}
@@ -148,8 +148,8 @@ const OrderHistoryPage = () => {
                         <UpdateFeedbackModal
                             isOpen={isUpdateFeedbackModalOpen}
                             setIsOpen={setIsUpdateFeedbackModalOpen}
-                            productVariantId={productVariantIdForFeedBack}
-                            setProductVariantId={setProductVariantIdForFeedBack}
+                            productID={productID}
+                            setProductID={setProductID}
                             refreshOrderList={refreshOrderList}
                         />
                     )}

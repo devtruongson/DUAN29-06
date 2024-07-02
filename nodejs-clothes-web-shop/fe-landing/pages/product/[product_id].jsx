@@ -1,5 +1,4 @@
 import { swtoast } from "@/mixins/swal.mixin.js";
-import { StarFilled } from "@ant-design/icons";
 import { Rate } from "antd";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -11,7 +10,7 @@ import ProductQuantityInput from "@/components/productDetailPage/productQuantity
 import { policyList } from "@/data/policyData.js";
 import productService from "@/services/productService.js";
 import useCartStore from "@/store/cartStore.js";
-import { formatPrice, formatRate } from "../../helpers/format.js";
+import { formatPrice } from "../../helpers/format.js";
 
 const ProductDetailPage = () => {
     const [quantity, setQuantity] = useState(1);
@@ -143,7 +142,7 @@ const ProductDetailPage = () => {
                                     </h6>
                                 </span>
                                 <span style={{ margin: "2px 0 0" }}>
-                                    Đã bán (web): {productDetail.sold && productDetail.sold}
+                                    {/* Đã bán (web): {productDetail.sold && productDetail.sold} */}
                                 </span>
                             </div>
                             <div className="price-box">
@@ -234,23 +233,11 @@ const ProductDetailPage = () => {
                             )}
                         </div>
                     </div>
-                    <div className="review-box position-relative d-flex align-items-center">
-                        <div className="">
-                            <h5 className="feedback_quantify-detail d-inline-block">
-                                {productDetail.feedbackQuantity > 0
-                                    ? `${productDetail.feedbackQuantity} Đánh giá`
-                                    : "Sản phẩm hiện chưa có đánh giá"}
-                            </h5>
-                            {productDetail.feedbackQuantity > 0 ? (
-                                <h5 className="rating-detail d-inline-block">
-                                    {productDetail.rating && `${formatRate(productDetail.rating)} / 5`}
-                                    <span className="star-icon">
-                                        <StarFilled />
-                                    </span>
-                                </h5>
-                            ) : null}
-                        </div>
-                    </div>
+                    <div style={{
+                        height: '2px',
+                        width: "100%",
+                        backgroundColor: "#ccc"
+                    }}></div>
                     <FeedbackBox productId={product_id} /></> : "Loading......"
             }
         </div>

@@ -1,22 +1,21 @@
 import axiosClient from '@/services/axiosClient';
-import axiosJWT from './axiosJWT';
 
 const feedbackService = {
 
     getFeedBackList: async (productId) => {
-        return await axiosClient.get(`/feedback/list/${productId}`);
+        return await axiosClient.get(`/review/list/${productId}`);
     },
 
-    getFeedBackDetail: async (productVariantId) => {
-        return await axiosJWT.get(`/feedback/detail/${productVariantId}`);
+    getFeedBackDetail: async (productID, idUser) => {
+        return await axiosClient.get(`/review/detail/${idUser}/${productID}`);
     },
 
     create: async (data) => {
-        return await axiosJWT.post('/feedback/create', data);
+        return await axiosClient.post('/review/create', data);
     },
 
     update: async (data) => {
-        return await axiosJWT.put('/feedback/update', data);
+        return await axiosClient.put('/review/update', data);
     },
 
 };
