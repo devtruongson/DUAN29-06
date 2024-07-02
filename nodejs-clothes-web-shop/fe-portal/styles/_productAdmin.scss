@@ -1,12 +1,15 @@
 .product-admin {
     margin-bottom: 0 !important;
-    table-layout: fixed;
+    table-layout : fixed;
 
     tr {
         border: 1px solid #ccc;
 
         .col-infor-product {
-            width: 36%;
+            width             : 36%;
+            // display        : flex;
+            // justify-content: start;
+            // align-items    : center;
         }
 
         .col-price {
@@ -41,16 +44,17 @@
 
     p {
         margin: 4px;
+
     }
 
     img {
-        max-width: 30%;
+        width : 40%;
         height: auto;
     }
 
     .edit-price-button {
-        padding: 4px;
-        font-size: 10px;
+        padding        : 4px;
+        font-size      : 10px;
         text-decoration: underline;
     }
 }

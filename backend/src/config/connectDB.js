@@ -1,7 +1,7 @@
 const { Sequelize } = require("sequelize");
 const mysql = require("mysql2/promise");
 
-const sequelize = new Sequelize("prj", "root", null, {
+const sequelize = new Sequelize("clothes-web-shop", "root", null, {
     host: "localhost",
     dialect: "mysql",
     logging: false,
