@@ -5,20 +5,23 @@ import { swalert, swtoast } from "@/mixins/swal.mixin";
 
 const OrderRow = (props) => {
     const {
-        order_id,
-        state_id,
+        orderID,
+        orderState,
         state_name,
-        created_at,
-        total_order_value,
+        orderDate,
+        totalOrderValue,
         refreshOrderTable,
     } = props;
 
     const addPointToPrice = (price) => {
+        if (!price) {
+            return;
+        }
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     };
 
-    const convertTime = (created_at) => {
-        const date = new Date(created_at);
+    const convertTime = (orderDate) => {
+        const date = new Date(orderDate);
         const year = date.getFullYear();
         const month = date.getMonth() + 1; // tháng (giá trị từ 0 đến 11, nên cộng thêm 1)
         const day = date.getDate(); // ngày trong tháng
@@ -35,14 +38,18 @@ const OrderRow = (props) => {
     };
 
     const renderCancelOrderBtn = () => {
-        if (state_id == 1 || state_id == 2 || state_id == 3) {
+        if (
+            orderState == "Chờ xác nhận" ||
+            orderID == "Đã xác nhận" ||
+            "Đang giao hàng"
+        ) {
             return (
                 <>
-                    <br />
                     <a
-                        className="text-danger"
+                        className="text-white"
                         href="#"
                         onClick={handleCancelOrder}
+                        style={{ textDecoration: "none" }}
                     >
                         Hủy đơn hàng
                     </a>
@@ -52,30 +59,45 @@ const OrderRow = (props) => {
     };
 
     const renderChangeStatusBtn = () => {
-        if (state_id == 1) {
+        if (orderState === "Chờ xác nhận") {
             return (
                 <>
-                    <a href="#" onClick={handleChangeStatus}>
+                    <a
+                        href="#"
+                        onClick={handleChangeStatus}
+                        className="text-white"
+                        style={{ textDecoration: "none" }}
+                    >
                         Xác nhận đơn hàng
                     </a>
                     <br />
                 </>
             );
         }
-        if (state_id == 2) {
+        if (orderState === "Đã xác nhận") {
             return (
                 <>
-                    <a href="#" onClick={handleChangeStatus}>
+                    <a
+                        href="#"
+                        onClick={handleChangeStatus}
+                        className="text-white"
+                        style={{ textDecoration: "none" }}
+                    >
                         Xác nhận đã bàn giao cho đơn vị vận chuyển
                     </a>
                     <br />
                 </>
             );
         }
-        if (state_id == 3) {
+        if (orderState === "Đang giao hàng") {
             return (
                 <>
-                    <a href="#" onClick={handleChangeStatus}>
+                    <a
+                        href="#"
+                        onClick={handleChangeStatus}
+                        className="text-white"
+                        style={{ textDecoration: "none" }}
+                    >
                         Xác nhận đã giao hàng thành công
                     </a>
                     <br />
@@ -97,9 +119,9 @@ const OrderRow = (props) => {
                 if (result.isConfirmed) {
                     try {
                         await axios.put(
-                            "http://localhost:8080/api/order/change-status/" +
-                                order_id +
-                                "/6"
+                            "http://localhost:8080/api/order/changeStatus/" +
+                                orderID +
+                                "/Đã hủy"
                         );
                         refreshOrderTable();
                         swtoast.success({
@@ -116,7 +138,7 @@ const OrderRow = (props) => {
     };
 
     const handleChangeStatus = () => {
-        if (state_id == 1) {
+        if (orderState == "Chờ xác nhận") {
             swalert
                 .fire({
                     title: "Xác nhận đơn hàng",
@@ -129,9 +151,9 @@ const OrderRow = (props) => {
                     if (result.isConfirmed) {
                         try {
                             await axios.put(
-                                "http://localhost:8080/api/order/change-status/" +
-                                    order_id +
-                                    "/2"
+                                "http://localhost:8080/api/order/changeStatus/" +
+                                    orderID +
+                                    "/Đã xác nhận"
                             );
                             refreshOrderTable();
                             swtoast.success({
@@ -146,7 +168,7 @@ const OrderRow = (props) => {
                     }
                 });
         }
-        if (state_id == 2) {
+        if (orderState == "Đã xác nhận") {
             swalert
                 .fire({
                     title: "Xác nhận đã bàn giao cho đơn vị vận chuyển",
@@ -159,9 +181,9 @@ const OrderRow = (props) => {
                     if (result.isConfirmed) {
                         try {
                             await axios.put(
-                                "http://localhost:8080/api/order/change-status/" +
-                                    order_id +
-                                    "/3"
+                                "http://localhost:8080/api/order/changeStatus/" +
+                                    orderID +
+                                    "/Đang giao hàng"
                             );
                             refreshOrderTable();
                             swtoast.success({
@@ -176,7 +198,7 @@ const OrderRow = (props) => {
                     }
                 });
         }
-        if (state_id == 3) {
+        if (orderState == "Đang giao hàng") {
             swalert
                 .fire({
                     title: "Xác nhận đã giao hàng thành công",
@@ -189,9 +211,9 @@ const OrderRow = (props) => {
                     if (result.isConfirmed) {
                         try {
                             await axios.put(
-                                "http://localhost:8080/api/order/change-status/" +
-                                    order_id +
-                                    "/4"
+                                "http://localhost:8080/api/order/changeStatus/" +
+                                    orderID +
+                                    "/Đã giao"
                             );
                             refreshOrderTable();
                             swtoast.success({
@@ -215,28 +237,78 @@ const OrderRow = (props) => {
                     <tr className="w-100">
                         <td className="fw-bold col-order-id">
                             <p className="d-flex align-items-center justify-content-center">
-                                #{order_id}
+                                #{orderID}
                             </p>
                         </td>
                         <td className="text-danger fw-bold col-state">
                             <p className="d-flex align-items-center justify-content-center">
-                                {state_name}
+                                {orderState}
                             </p>
                         </td>
                         <td className="col-create-at">
                             <p className="d-flex align-items-center justify-content-center">
-                                {convertTime(created_at)}
+                                {convertTime(orderDate)}
                             </p>
                         </td>
                         <td className="text-danger fw-bold col-total-value">
-                            <p>{addPointToPrice(total_order_value)}</p>
+                            <p>{addPointToPrice(totalOrderValue)}</p>
                         </td>
                         <td className="col-action manipulation">
-                            {renderChangeStatusBtn()}
-                            <Link href={`/order/detail/${order_id}`}>
-                                Xem chi tiết
+                            {orderState === "Đã hủy" ||
+                            orderState === "Đã giao" ? (
+                                <></>
+                            ) : (
+                                <button
+                                    style={{
+                                        margin: "4px 0",
+                                        width: "100%",
+                                        padding: "8px",
+                                        borderRadius: "5px",
+                                        background: "blue",
+                                        border: "none",
+                                        color: "#fff",
+                                        textDecoration: "none",
+                                    }}
+                                >
+                                    {renderChangeStatusBtn()}
+                                </button>
+                            )}
+
+                            <Link
+                                href={`/order/detail/${orderID}`}
+                                style={{ textDecoration: "none" }}
+                            >
+                                <button
+                                    style={{
+                                        margin: "4px 0",
+                                        width: "100%",
+                                        padding: "8px",
+                                        borderRadius: "5px",
+                                        background: "blue",
+                                        border: "none",
+                                        color: "#fff",
+                                    }}
+                                >
+                                    Xem chi tiết
+                                </button>
                             </Link>
-                            {renderCancelOrderBtn()}
+                            {orderState === "Đã hủy" ? (
+                                <></>
+                            ) : (
+                                <button
+                                    style={{
+                                        margin: "4px 0",
+                                        width: "100%",
+                                        padding: "8px",
+                                        borderRadius: "5px",
+                                        background: "blue",
+                                        border: "none",
+                                        color: "#fff",
+                                    }}
+                                >
+                                    {renderCancelOrderBtn()}
+                                </button>
+                            )}
                         </td>
                     </tr>
                 </tbody>

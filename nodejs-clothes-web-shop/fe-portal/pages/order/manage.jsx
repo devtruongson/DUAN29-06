@@ -122,11 +122,11 @@ const OrderManagementPage = () => {
                             return (
                                 <OrderRow
                                     key={index}
-                                    order_id={order.order_id}
-                                    state_id={order.state_id}
+                                    orderID={order.orderID}
+                                    orderState={order.orderState}
                                     state_name={order.state_name}
-                                    created_at={order.created_at}
-                                    total_order_value={order.total_order_value}
+                                    orderDate={order.orderDate}
+                                    totalOrderValue={order.totalOrderValue}
                                     refreshOrderTable={refreshOrderTable}
                                 />
                             );
