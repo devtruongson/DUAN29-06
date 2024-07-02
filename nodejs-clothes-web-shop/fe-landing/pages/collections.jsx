@@ -1,17 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
 import { Empty } from "antd";
 import { useRouter } from "next/router";
 
 import ProductItem from "@/components/collectionPage/productItem";
-import queries from "@/queries";
+import productService from "@/services/productService";
+import { useEffect, useState } from "react";
 
 const CollectionPage = () => {
     const router = useRouter();
     const { category } = router.query;
+    const [data, setData] = useState([])
 
-    const { isError, error, data } = useQuery(queries.products.list(category));
-    if (isError) console.log(error);
-    const productList = data?.data;
+    useEffect(() => {
+        const _fetch = async () => {
+            try {
+                const Res = await productService.getProductList(category)
+                setData(Res.data)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        _fetch()
+    }, [category])
+
 
     return (
         <div
@@ -19,8 +29,8 @@ const CollectionPage = () => {
             style={{ width: "100%", padding: "40px 0 80px" }}
         >
             <div className="product-list row">
-                {productList && productList.length ? (
-                    productList.map((product, index) => {
+                {data && data.length ? (
+                    data.map((product, index) => {
                         return (
                             <div
                                 className="col-3 col-md-4 col-lg-3 gap-2 mt-4"

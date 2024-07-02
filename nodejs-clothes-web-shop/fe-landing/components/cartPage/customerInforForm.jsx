@@ -30,7 +30,7 @@ const CustomerInforForm = ({ email = '', customerName = '', phoneNumber = '', ad
     const { control, handleSubmit, formState: { isSubmitting } } = useForm({
         defaultValues: {
             email,
-            customerName,
+            customerName: customerName,
             phoneNumber,
             address
         },

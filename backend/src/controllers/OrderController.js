@@ -8,6 +8,7 @@ const Product = require('../models/product');
 const CustomerInfo = require('../models/customerInfo');
 const OrderItem = require('../models/orderItem');
 const Review = require('../models/review');
+const ProductPicture = require('../models/productPicture');
 
 
 let create = async (req, res, next) => {
@@ -32,10 +33,9 @@ let create = async (req, res, next) => {
     if (orderItems === undefined) return res.status(400).send('Trường orderItems không tồn tại');
 
     try {
-        
+
         let newOrder = await Order.create({
             userID,
-            
             name,
             email,
             phoneNumber,
@@ -50,18 +50,17 @@ let create = async (req, res, next) => {
         for (let i = 0; i < orderItems.length; i++) {
             let orderItem = orderItems[i];
             let productVariant = await ProductVariant.findOne({
-                attributes: ['productVariantID', 'quantity','productID'],
+                attributes: ['productVariantID', 'quantity', 'productID'],
                 include: [
                     {
-                        model: Product, attributes: ['productID','price','sold'],
-                        
+                        model: Product, attributes: ['productID', 'price', 'sold'],
                     },
                 ],
                 where: { productVariantID: orderItem.productVariantID }
             });
             if (productVariant == null)
                 return res.status(400).send("Sản phẩm này không tồn tại");
-           
+
             if (orderItem.quantity > productVariant.quantity)
                 return res.status(400).send("Số lượng sản phẩm không hợp lệ");
             let productVariantPrice = productVariant.Product.price;
@@ -75,19 +74,19 @@ let create = async (req, res, next) => {
                 totalValue
             }
             await OrderItem.create(newOrderItem);
-           let newProductVariantQuantity = productVariant.quantity - orderItem.quantity;
+            let newProductVariantQuantity = productVariant.quantity - orderItem.quantity;
             await productVariant.update({ quantity: newProductVariantQuantity });
             totalProductValue += totalValue;
             ////await Product.increment('sold', { 
-               // by: orderItem.quantity, 
-               //where: { productID: productVariant.productID } 
-             // });
+            // by: orderItem.quantity, 
+            //where: { productID: productVariant.productID } 
+            // });
         }
-         
+
         let deliveryCharges = 20000
         let totalOrderValue = totalProductValue + deliveryCharges;
         newOrder.update({ totalProductValue, deliveryCharges, totalOrderValue });
-        
+
         return res.send(newOrder)
     } catch (err) {
         console.log(err);
@@ -97,62 +96,62 @@ let create = async (req, res, next) => {
 let changeStatus = async (req, res, next) => {
     let orderID = req.params.orderID;
     if (!orderID) return res.status(400).send('Trường orderID không tồn tại');
-  
+
     let newState = req.params.newState;
     if (!newState) return res.status(400).send('Trường newState không tồn tại');
-  
+
     const validStateTransitions = {
-      "Chờ xác nhận": ["Đã xác nhận", "Đã hủy"],
-      "Đã xác nhận": ["Đang giao hàng", "Đã hủy"],
-      "Đang giao hàng": ["Đã giao", "Đã hủy"],
-      // "Đã giao", "Đã hủy" là các trạng thái cuối, không thể chuyển đi
+        "Chờ xác nhận": ["Đã xác nhận", "Đã hủy"],
+        "Đã xác nhận": ["Đang giao hàng", "Đã hủy"],
+        "Đang giao hàng": ["Đã giao", "Đã hủy"],
+        // "Đã giao", "Đã hủy" là các trạng thái cuối, không thể chuyển đi
     };
-  
+
     try {
-      let order = await Order.findOne({ where: { orderID } });
-      if (!order) return res.status(400).send('Order này không tồn tại');
-  
-      // Kiểm tra xem trạng thái mới có hợp lệ từ trạng thái hiện tại không
-      if (!validStateTransitions[order.orderState]?.includes(newState)) {
-        return res.status(400).send('Trạng thái chuyển đổi không hợp lệ');
-      }
-  
-      // Xử lý đặc biệt cho trạng thái "Đã giao"
-      if (newState === "Đã giao") {
-        let productVariantList = await order.getProductVariants();
-        for (let productVariant of productVariantList) {
-          let product = await productVariant.getProduct();
-          product.sold += productVariant.OrderItem.quantity;
-          await product.save();
+        let order = await Order.findOne({ where: { orderID } });
+        if (!order) return res.status(400).send('Order này không tồn tại');
+
+        // Kiểm tra xem trạng thái mới có hợp lệ từ trạng thái hiện tại không
+        if (!validStateTransitions[order.orderState]?.includes(newState)) {
+            return res.status(400).send('Trạng thái chuyển đổi không hợp lệ');
         }
-      }
-  
-      // Cập nhật trạng thái đơn hàng
-      order.orderState = newState;
-      await order.save();
-      return res.send(order);
+
+        // Xử lý đặc biệt cho trạng thái "Đã giao"
+        if (newState === "Đã giao") {
+            let productVariantList = await order.getProductVariants();
+            for (let productVariant of productVariantList) {
+                let product = await productVariant.getProduct();
+                product.sold += productVariant.OrderItem.quantity;
+                await product.save();
+            }
+        }
+
+        // Cập nhật trạng thái đơn hàng
+        order.orderState = newState;
+        await order.save();
+        return res.send(order);
     } catch (err) {
-      console.error(err);
-      return res.status(500).send('Gặp lỗi khi xử lý đơn hàng');
+        console.error(err);
+        return res.status(500).send('Gặp lỗi khi xử lý đơn hàng');
     }
-  };
-  
-  let listAdminSide = async (req, res, next) => {
+};
+
+let listAdminSide = async (req, res, next) => {
     try {
         let orderList = await Order.findAll({
-            attributes: ['orderID', 'totalOrderValue','orderState'],
-            where:{orderState:'Chờ xác nhận'},
+            attributes: ['orderID', 'totalOrderValue', 'orderState'],
+            where: { orderState: 'Chờ xác nhận' },
         });
 
         orderList = orderList.map((order) => {
             let newOrder = {
                 orderID: order.orderID,
-                
+
                 totalOrderValue: order.totalOrderValue,
                 orderState: order.orderState,
-                
+
             }
-           
+
             return newOrder;
         });
 
@@ -170,11 +169,11 @@ let listCustomerSide = async (req, res, next) => {
     }
 
     try {
-        let customer = await User.findOne({ 
-            where: { userID: customerID, roleID: 2 } 
+        let customer = await User.findOne({
+            where: { userID: customerID, roleID: 2 }
         });
         if (customer == null) {
-            return res.status(404).send('Khách hàng không tồn tại'); 
+            return res.status(404).send('Khách hàng không tồn tại');
         }
     } catch (err) {
         console.error('Lỗi khi tìm kiếm khách hàng:', err);
@@ -185,76 +184,89 @@ let listCustomerSide = async (req, res, next) => {
         attributes: ['orderID', 'totalOrderValue', 'orderDate', 'orderState'],
         where: { userID: customerID },
         include: [
-          {
-            model: OrderItem,
-            include: [
-              { 
-                model: ProductVariant,
-                required: true,
-                attributes: ['productVariantID', 'quantity', 'Colour', 'Size'],
+            {
+                model: OrderItem,
                 include: [
-                  {
-                    model: Product,
-                    attributes: ['productID', 'name', 'price'],
-                    include: [
-                      {
-                        model: Review,
-                        where: { userID: customerID },
-                        required: false
-                      },
-                    ],
-                  },
+                    {
+                        model: ProductVariant,
+                        required: true,
+                        attributes: ['productVariantID', 'quantity', 'Colour', 'Size'],
+                        include: [
+                            {
+                                model: Product,
+                                attributes: ['productID', 'name', 'price'],
+                                include: [
+                                    {
+                                        model: Review,
+                                        where: { userID: customerID },
+                                        required: false
+                                    },
+                                    {
+                                        model: ProductPicture,
+                                        attributes: ["path"],
+                                    }
+                                ],
+
+                            },
+
+                        ],
+                    },
                 ],
-              },
-            ],
-          },
+            },
         ],
         order: [['orderDate', 'DESC']], // Sắp xếp theo ngày giảm dần
-      });
-  
-      // Chuyển đổi dữ liệu thành định dạng mong muốn cho mỗi đơn hàng
-     try { const formattedOrderList = await Promise.all(orderList.map(async (order) => {
-        let productVariantList = await order.getProductVariants(); // Lấy danh sách sản phẩm
-        let orderItemList = [];
-  
-        // Lặp qua danh sách sản phẩm và chuyển đổi thông tin
-        for (let productVariant of productVariantList) {
-          let product = await productVariant.getProduct();
-          let review = await Review.findOne({
-            where: {
-              userID: customerID,
-              productID: product.productID
+    });
+
+    // Chuyển đổi dữ liệu thành định dạng mong muốn cho mỗi đơn hàng
+    try {
+        const formattedOrderList = await Promise.all(orderList.map(async (order) => {
+            let productVariantList = await order.getProductVariants(); // Lấy danh sách sản phẩm
+            let orderItemList = [];
+
+            // Lặp qua danh sách sản phẩm và chuyển đổi thông tin
+            for (let productVariant of productVariantList) {
+                let product = await productVariant.getProduct();
+                let review = await Review.findOne({
+                    where: {
+                        userID: customerID,
+                        productID: product.productID
+                    }
+                });
+
+                const image = await ProductPicture.findOne({
+                    where: {
+                        productID: product.productID
+                    }
+                })
+
+                orderItemList.push({
+                    productVariantID: productVariant.productVariantID,
+                    name: product.name,
+                    image: image ? image.path : null, // Xử lý trường hợp không có ảnh
+                    quantity: productVariant.OrderItem.quantity,
+                    colour: productVariant.Colour,
+                    size: productVariant.Size,
+                    price: productVariant.OrderItem.price,
+                    hasReview: review != null // Kiểm tra xem có đánh giá không
+                });
             }
-          });
-  
-          orderItemList.push({
-            productVariantID: productVariant.productVariantID,
-            name: product.name,
-            // image: productImages?.[0]?.path || null, // Xử lý trường hợp không có ảnh
-            quantity: productVariant.OrderItem.quantity,
-            colour: productVariant.Colour,
-            size: productVariant.Size,
-            price: productVariant.OrderItem.price,
-            hasReview: review != null // Kiểm tra xem có đánh giá không
-          });
-        }
-  
-        // Trả về thông tin đơn hàng đã chuyển đổi
-        return {
-          orderID: order.orderID,
-          orderState: order.orderState,
-          orderItems: orderItemList,
-          totalOrderValue: order.totalOrderValue,
-          createdAt: order.orderDate
-        };
-      }));
-  
-      // Trả về danh sách đơn hàng đã chuyển đổi
-      return res.send(formattedOrderList);
+
+            // Trả về thông tin đơn hàng đã chuyển đổi
+            return {
+                orderID: order.orderID,
+                orderState: order.orderState,
+                orderItems: orderItemList,
+                totalOrderValue: order.totalOrderValue,
+                createdAt: order.orderDate
+            };
+        }));
+
+        // Trả về danh sách đơn hàng đã chuyển đổi
+        return res.send(formattedOrderList);
     } catch (err) {
-      // Xử lý lỗi nếu có
-      console.error('Lỗi khi truy vấn dữ liệu:', err);
-      return res.status(500).send('Lỗi server khi tải dữ liệu');
+        // Xử lý lỗi nếu có
+        console.error('Lỗi khi truy vấn dữ liệu:', err);
+        return res.status(500).send('Lỗi server khi tải dữ liệu');
     }
 }
 
@@ -273,19 +285,19 @@ let detailCustomerSide = async (req, res, next) => {
     let orderID = req.params.orderID;
     if (orderID === undefined) return res.status(400).send('Trường orderID không tồn tại');
 
-   let order;
-   try { 
-    order= await Order.findOne({
-        where: { orderID, userID: customerID },
-        include: [{
-            model: ProductVariant,
-            include: [Product] 
-        } ,
-        {
-            model:User,
-            include:[CustomerInfo]
-        }]
-    });
+    let order;
+    try {
+        order = await Order.findOne({
+            where: { orderID, userID: customerID },
+            include: [{
+                model: ProductVariant,
+                include: [Product]
+            },
+            {
+                model: User,
+                include: [CustomerInfo]
+            }]
+        });
 
         if (order == null) return res.status(400).send('Order này không tồn tại');
     } catch (err) {
@@ -293,9 +305,9 @@ let detailCustomerSide = async (req, res, next) => {
         return res.status(500).send('Gặp lỗi khi tải dữ liệu vui lòng thử lại');
     }
 
-    
+
     let orderState = order.orderState;
-    let orderDate = order.orderDate; 
+    let orderDate = order.orderDate;
 
     // Chuyển đổi danh sách sản phẩm
     let orderItemList = order.productVariants.map(productVariant => {
@@ -310,20 +322,19 @@ let detailCustomerSide = async (req, res, next) => {
             totalValue: productVariant.OrderItem.totalValue
         };
     });
-    
+
 
     // Chuyển đổi thông tin đơn hàng
     let orderConverted = {
         orderID: order.orderID,
-        orderState: orderState, 
-         
+        orderState: orderState,
         orderDate,
         orderItems: orderItemList,
         totalProductValue: order.totalProductValue,
         deliveryCharges: order.deliveryCharges,
         totalOrderValue: order.totalOrderValue,
         customerName: order.User.CustomerInfo.name,
-        email: order.User.CustomerInfo.email,
+        email: order.User.email,
         phoneNumber: order.User.CustomerInfo.phoneNumber,
         shippingAddress: order.shippingAddress
     };
@@ -333,27 +344,27 @@ let detailCustomerSide = async (req, res, next) => {
 let detailAdminSide = async (req, res, next) => {
     let orderID = req.params.orderID;
     if (orderID === undefined) return res.status(400).send('Trường orderID không tồn tại');
-let order;
+    let order;
     try {
-    order= await Order.findOne({
-        where: { orderID },
-        include: [{
-            model: ProductVariant,
-            include: [Product] 
-        } ,
-        {
-            model:User,
-            include:[CustomerInfo]
-        }]
-    });
+        order = await Order.findOne({
+            where: { orderID },
+            include: [{
+                model: ProductVariant,
+                include: [Product]
+            },
+            {
+                model: User,
+                include: [CustomerInfo]
+            }]
+        });
 
         if (order == null) return res.status(400).send('Order này không tồn tại');
 
-       
+
         let orderState = order.orderState;
         let orderDate = order.orderDate;
 
-        
+
 
         // Chuyển đổi danh sách sản phẩm
         let orderItemList = order.productVariants.map(productVariant => {
@@ -365,8 +376,8 @@ let order;
                 name: product.name,
                 quantity: orderItem ? orderItem.quantity : 0,
                 price: orderItem ? orderItem.price : 0,
-                colour: productVariant.Colour, 
-                size: productVariant.Size,    
+                colour: productVariant.Colour,
+                size: productVariant.Size,
                 totalValue: orderItem ? orderItem.totalValue : 0
             };
         });
@@ -374,8 +385,8 @@ let order;
         // Chuyển đổi thông tin đơn hàng
         let orderConverted = {
             orderID: order.orderID,
-            orderState: orderState, 
-             
+            orderState: orderState,
+
             orderDate,
             orderItems: orderItemList,
             totalProductValue: order.totalProductValue,
@@ -395,6 +406,6 @@ let order;
 };
 
 module.exports = {
-    create,changeStatus,listAdminSide,listCustomerSide,detailCustomerSide,detailAdminSide
-   
+    create, changeStatus, listAdminSide, listCustomerSide, detailCustomerSide, detailAdminSide
+
 }

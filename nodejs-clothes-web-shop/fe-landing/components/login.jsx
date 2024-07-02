@@ -30,10 +30,7 @@ const Login = (props) => {
     const handleLogin = async (values) => {
         try {
             const respond = await customerService.login(values);
-            const customerInfor = {
-                accessToken: respond?.data?.access_token,
-                accessTokenExpires: respond?.data?.access_token_expires
-            }
+            const customerInfor = respond.data;
             setCustomerLogin(customerInfor);
             swtoast.success({
                 text: 'Đăng nhập tài khoản thành công!'

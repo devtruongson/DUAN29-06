@@ -6,8 +6,8 @@ const orderService = {
         return await axiosClient.get(`/order/customer/list/${idUser}`);
     },
 
-    getDetail: async (orderId) => {
-        return await axiosClient.get(`/order/detail/${orderId}`);
+    getDetail: async (orderId, idUser) => {
+        return await axiosClient.get(`/order/detail/${idUser}/${orderId}`);
     },
 
     placeOrder: async (data) => {
@@ -15,7 +15,7 @@ const orderService = {
     },
 
     cancelOrder: async (orderId) => {
-        return await axiosClient.put(`/order/change-status/${orderId}/5`);
+        return await axiosClient.put(`/order/changeStatus/${orderId}/Đã hủy`);
     },
 
 };

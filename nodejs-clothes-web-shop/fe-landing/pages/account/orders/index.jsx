@@ -118,12 +118,12 @@ const OrderHistoryPage = () => {
                                     return (
                                         <Order
                                             key={index}
-                                            id={order.order_id}
-                                            stateId={order.state_id}
-                                            stateName={order.state_name}
-                                            orderItems={order.order_items}
-                                            totalOrderValue={order.total_order_value}
-                                            createdAt={order.created_at}
+                                            id={order.orderID}
+                                            stateName={order.orderState}
+                                            orderState={order.orderState}
+                                            orderItems={order.orderItems}
+                                            totalOrderValue={order.totalOrderValue}
+                                            createdAt={order.createdAt}
                                             setIsCreateFeedbackModalOpen={setIsCreateFeedbackModalOpen}
                                             setIsUpdateFeedbackModalOpen={setIsUpdateFeedbackModalOpen}
                                             setProductVariantIdForFeedBack={

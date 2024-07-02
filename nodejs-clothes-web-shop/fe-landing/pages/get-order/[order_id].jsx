@@ -6,6 +6,7 @@ import OrderDetailTable from '@/components/orderDetailPage/orderDetailTable';
 import { formatTime } from '@/helpers/format';
 import { swtoast } from '@/mixins/swal.mixin';
 import orderService from '@/services/orderService';
+import useCustomerStore from '@/store/customerStore';
 
 const fakeOrderDetail = {
     order_id: '71828451735555',
@@ -50,8 +51,8 @@ const fakeOrderDetail = {
 const OrderDetailPage = () => {
     const router = useRouter();
     const { order_id } = router.query;
+    const customerId = useCustomerStore((state) => state.customerInfor?.customerID);
 
-    const [stateId, setStateId] = useState('');
     const [orderId, setOrderId] = useState('');
     const [stateName, setStateName] = useState('');
     const [orderItems, setOrderItems] = useState([]);
@@ -67,40 +68,26 @@ const OrderDetailPage = () => {
     useEffect(() => {
         const getOrderDetail = async () => {
             try {
-                const response = await orderService.getDetail(order_id);
-                setOrderId(response.data.order_id);
-                setStateName(response.data.state_name);
-                setStateId(response.data.state_id);
-                setCreatedAt(response.data.created_at);
-                setOrderItems(response.data.order_items);
-                setTotalProductValue(response.data.total_product_value);
-                setDeliveryCharges(response.data.delivery_charges);
-                setTotalOrderValue(response.data.total_order_value);
-                setCustomerName(response.data.customer_name);
+                const response = await orderService.getDetail(order_id, customerId);
+                setOrderId(response.data.orderID);
+                setStateName(response.data.orderState);
+                setCreatedAt(response.data.orderDate);
+                setOrderItems(response.data.orderItems);
+                setTotalProductValue(response.data.totalProductValue);
+                setDeliveryCharges(response.data.deliveryCharges);
+                setTotalOrderValue(response.data.totalOrderValue);
+                setCustomerName(response.data.customerName);
                 setEmail(response.data.email);
-                setPhoneNumber(response.data.phone_number);
-                setAddress(response.data.address);
+                setPhoneNumber(response.data.phoneNumber);
+                setAddress(response.data.shippingAddress);
             } catch (error) {
                 console.log(error);
-                router.push('/404');
-                // setOrderId(fakeOrderDetail.order_id);
-                // setStateName(fakeOrderDetail.state_name);
-                // setStateId(fakeOrderDetail.state_id);
-                // setCreatedAt(fakeOrderDetail.created_at);
-                // setOrderItems(fakeOrderDetail.order_items);
-                // setTotalProductValue(fakeOrderDetail.total_product_value);
-                // setDeliveryCharges(fakeOrderDetail.delivery_charges);
-                // setTotalOrderValue(fakeOrderDetail.total_order_value);
-                // setCustomerName(fakeOrderDetail.customer_name);
-                // setEmail(fakeOrderDetail.email);
-                // setPhoneNumber(fakeOrderDetail.phone_number);
-                // setAddress(fakeOrderDetail.address);
             }
         };
         if (order_id) {
             getOrderDetail();
         }
-    }, [router, order_id]);
+    }, [router, order_id, customerId]);
 
     const handleCancelOrder = useCallback(async () => {
         try {
@@ -114,14 +101,14 @@ const OrderDetailPage = () => {
     }, [orderId, router]);
 
     const renderCancelBtn = useMemo(() => {
-        if (stateId == 1 || stateId == 2 || stateId == 3) {
+        if (stateName == 'Chờ xác nhận' || stateName == 'Đã xác nhận') {
             return (
                 <button className="cancel-order-btn" onClick={handleCancelOrder}>
                     Hủy đơn hàng
                 </button>
             );
         }
-    }, [stateId, handleCancelOrder]);
+    }, [handleCancelOrder]);
 
     return (
         <div className="order-detail-page container pb-4">
