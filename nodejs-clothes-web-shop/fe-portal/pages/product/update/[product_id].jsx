@@ -250,6 +250,7 @@ const UpdateProduct = () => {
                     <div className="col-6">
                         <label htmlFor='product-color' className="fw-bold">Màu:</label>
                         <Input
+                            disabled
                             id='product-color' placeholder='Nhập màu sản phẩm'
                             value={colorText}
                             onChange={(e) => setColorText(e.target.value)}
@@ -258,6 +259,7 @@ const UpdateProduct = () => {
                     <div className="col-6">
                         <label htmlFor='product-size' className="fw-bold">Size:</label>
                         <Input
+                            disabled
                             id='product-name' placeholder='Nhập size sản phẩm'
                             value={sizeText}
                             onChange={(e) => setSizeText(e.target.value)}

@@ -405,9 +405,9 @@ let detailAdminSide = async (req, res, next) => {
                     return {
                         productVariantID: productVariant.productVariantID,
 
-                        colour: productVariant.colour,
+                        colour: productVariant.Colour,
 
-                        size: productVariant.size,
+                        size: productVariant.Size,
                         quantity: productVariant.quantity,
                     };
                 }

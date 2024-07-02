@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Input, InputNumber, Empty } from 'antd'
 
@@ -28,9 +28,11 @@ const CreateProductPage = () => {
     const [sizeText, setSizeText] = useState("");
     const [images, setImages] = useState([]);
     const [previews, setPreviews] = useState([]);
+    const [quantity, setQuantity] = useState("");
 
     const [productVariantList, setProductVariantList] = useState([]);
     const [rowProductVariant, setRowProductVariant] = useState([]);
+    const ref = useRef(null);
 
     useEffect(() => {
         setEditorLoaded(true);
@@ -92,9 +94,8 @@ const CreateProductPage = () => {
                             productID: product_id,
                             Colour: colorText,
                             Size: sizeText,
-                            quantity: 5,
+                            quantity: quantity,
                         },
-
                     );
                     console.log(result.data);
                 }
@@ -111,6 +112,16 @@ const CreateProductPage = () => {
         if (!productName) {
             swtoast.error({ text: 'Tên sản phẩm không được bỏ trống' })
             return false
+        }
+        if (!quantity) {
+            swtoast.error({ text: 'Tồn kho sản phẩm không được bỏ trống' })
+            return false
+        } else {
+            const q = parseInt(quantity)
+            if (!q) {
+                swtoast.error({ text: 'Tồn kho sản phẩm không được bỏ trống và phải là số' })
+                return false
+            }
         }
         if (!categoryId) {
             swtoast.error({ text: 'Danh mục sản phẩm không được bỏ trống' })
@@ -142,6 +153,10 @@ const CreateProductPage = () => {
                 return false
             }
         }
+        if (images.length <= 0) {
+            swtoast.error({ text: 'Biến thể sản phẩm phải có ít nhất một ảnh' })
+            return false
+        }
         return true
     }
 
@@ -158,9 +173,12 @@ const CreateProductPage = () => {
         setSizeBoxValue([])
         setSizeText("")
         setColorText("")
+        setPreviews([])
+        setImages([])
+        if (ref.current) {
+            ref.current.value = null;
+        }
     }
-
-
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
@@ -176,6 +194,11 @@ const CreateProductPage = () => {
         });
     };
 
+    const handleDeleteImage = (link, indexPar) => {
+        setPreviews(prev => prev.filter(image => image !== link))
+        setImages(prev => prev.filter((image, index) => index !== indexPar))
+    }
+
     return (
         <div className='create-product-page'>
             <Header title="Thêm sản phẩm" />
@@ -188,6 +211,14 @@ const CreateProductPage = () => {
                             id='product-name' placeholder='Nhập tên sản phẩm'
                             value={productName}
                             onChange={(e) => setProductName(e.target.value)}
+                        />
+                    </div>
+                    <div className="col-6">
+                        <label htmlFor='product-name' className="fw-bold">Tồn kho:</label>
+                        <Input
+                            id='product-name' placeholder='Nhập tên sản phẩm'
+                            value={quantity}
+                            onChange={(e) => setQuantity(e.target.value)}
                         />
                     </div>
                 </div>
@@ -245,10 +276,17 @@ const CreateProductPage = () => {
                 </div>
                 <div className='mt-4'>
                     <label htmlFor='product-file' className="fw-bold">Chọn ảnh:</label>
-                    <input type="file" id='product-file' accept="image/*" className='form-control' multiple onChange={handleImageChange} />
+                    <input ref={ref} type="file" id='product-file' accept="image/*" className='form-control' multiple onChange={handleImageChange} />
                     <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                         {previews.map((preview, index) => (
-                            <div key={index} style={{ margin: '10px' }}>
+                            <div key={index} style={{ margin: '10px', position: 'relative' }}>
+                                <button style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    right: 0,
+                                }} className='btn btn-primary' onClick={() => handleDeleteImage(preview, index)}>
+                                    Xóa
+                                </button>
                                 <img src={preview} alt={`Preview ${index}`} style={{ width: '200px', height: '200px', objectFit: 'cover' }} />
                             </div>
                         ))}
