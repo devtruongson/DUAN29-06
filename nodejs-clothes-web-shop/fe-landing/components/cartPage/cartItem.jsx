@@ -16,8 +16,14 @@ const CartItem = (props) => {
                 <div className="cart-col-left col-3">
                     <div className="box-img position-relative border-radius">
                         <Image
+                            style={{
+                                objectFit: "cover"
+                            }}
                             className="border-radius"
-                            src={image}
+                            src={image.path.replace(
+                                image.path.split("/")[2],
+                                `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`
+                            )}
                             alt=""
                             width={1426}
                             height={2100}

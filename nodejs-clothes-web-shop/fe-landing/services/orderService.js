@@ -1,18 +1,17 @@
 import axiosClient from './axiosClient';
-import axiosJWT from './axiosJWT';
 
 const orderService = {
 
-    getOrderHistory: async () => {
-        return await axiosJWT.get('/order/customer/list');
+    getOrderHistory: async (idUser) => {
+        return await axiosClient.get(`/order/customer/list/${idUser}`);
     },
 
     getDetail: async (orderId) => {
-        return await axiosJWT.get(`/order/detail/${orderId}`);
+        return await axiosClient.get(`/order/detail/${orderId}`);
     },
 
     placeOrder: async (data) => {
-        return await axiosJWT.post('/order/create', data);
+        return await axiosClient.post('/order/create', data);
     },
 
     cancelOrder: async (orderId) => {

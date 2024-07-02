@@ -26,10 +26,11 @@ const CartPage = () => {
     }
     const customerInfor = data?.data && {
         email: data.data?.email,
-        customerName: data.data?.customer_name,
-        phoneNumber: data.data?.phone_number,
+        customerName: data.data?.name,
+        phoneNumber: data.data?.phoneNumber,
         address: data.data?.address,
     };
+
 
     const totalPrice = useMemo(() => {
         return productList.reduce(

@@ -13,6 +13,9 @@ const CarouselFade = ({ imageList }) => {
                                 style={{ paddingTop: "150%" }}
                             >
                                 <Image
+                                    style={{
+                                        objectFit: "cover"
+                                    }}
                                     className="rounded"
                                     src={image.path.replace(
                                         image.path.split("/")[2],

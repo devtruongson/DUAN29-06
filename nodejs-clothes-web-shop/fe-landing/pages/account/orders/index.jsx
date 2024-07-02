@@ -66,16 +66,18 @@ import useCustomerStore from '@/store/customerStore';
 // ];
 
 const OrderHistoryPage = () => {
-    const customerId = useCustomerStore((state) => state.customerInfor?.customerId);
+    const customerId = useCustomerStore((state) => state.customerInfor?.customerID);
     const [orderList, setOrderList] = useState([]);
     const [productVariantIdForFeedBack, setProductVariantIdForFeedBack] = useState(null);
     const [isCreateFeedbackModalOpen, setIsCreateFeedbackModalOpen] = useState(false);
     const [isUpdateFeedbackModalOpen, setIsUpdateFeedbackModalOpen] = useState(false);
 
+    console.log(customerId)
+
     const refreshOrderList = async () => {
         if (customerId) {
             try {
-                const result = await orderService.getOrderHistory();
+                const result = await orderService.getOrderHistory(customerId);
                 setOrderList(result.data);
             } catch (err) {
                 console.log(err);
@@ -86,7 +88,7 @@ const OrderHistoryPage = () => {
     useEffect(() => {
         const getOrderList = async () => {
             try {
-                const result = await orderService.getOrderHistory();
+                const result = await orderService.getOrderHistory(customerId);
                 setOrderList(result.data);
             } catch (err) {
                 console.log(err);

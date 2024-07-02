@@ -1,4 +1,19 @@
 .product-item {
+    height: 550px;
+
+    .product_name_item{
+        font-size: 18px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .img_product-thumbnails{
+        height: 400px !important;
+        width: 100%;
+        object-fit: cover;
+    }
     
     a {
         text-decoration: none;
