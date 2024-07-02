@@ -11,8 +11,8 @@ const OrderItem = (props) => {
         quantity,
         colour,
         size,
+        orderState,
         price,
-        stateId,
         hasFeedback,
         setIsCreateFeedbackModalOpen,
         setIsUpdateFeedbackModalOpen,
@@ -32,7 +32,7 @@ const OrderItem = (props) => {
     };
 
     const renderFeedbackBtn = () => {
-        if (stateId == 4)
+        if (orderState === "Đã giao")
             if (hasFeedback)
                 return (
                     <div onClick={showUpdateFeedbackModal} className="feedback-btn border-radius">
@@ -52,7 +52,10 @@ const OrderItem = (props) => {
             <div className="row">
                 <div className="col-2 d-flex border-radius justify-content-center align-items-center">
                     <div className="box-img border-radius">
-                        <Image className="border-radius" src={image} alt="" fill />
+                        <Image className="border-radius" src={image?.replace(
+                            image?.split("/")[2],
+                            `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`
+                        )} alt="" fill />
                     </div>
                 </div>
                 <div className="col-10 border-radius d-flex justify-content-between">

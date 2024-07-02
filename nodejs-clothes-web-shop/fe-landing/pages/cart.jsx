@@ -49,16 +49,16 @@ const CartPage = () => {
                 try {
                     const orderItems = productList.map((product) => {
                         return {
-                            product_variant_id: product.productVariantId,
+                            productVariantID: product.productVariantId,
                             quantity: product.quantity,
                         };
                     });
                     const order = {
-                        customer_name: values.customerName,
+                        name: values.customerName,
                         email: values.email,
-                        phone_number: values.phoneNumber,
-                        address: values.address,
-                        order_items: orderItems,
+                        phoneNumber: values.phoneNumber,
+                        shippingAddress: values.address,
+                        orderItems: orderItems,
                     };
                     await orderService.placeOrder(order);
                     clearCart();

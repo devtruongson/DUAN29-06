@@ -27,7 +27,7 @@ const OrderDetailTable = (props) => {
                                     <td className="text-center">{formatPrice(orderItem.price)}</td>
                                     <td className="text-center">{`${orderItem.colour} / ${orderItem.size}`}</td>
                                     <td className="text-right">
-                                        {formatPrice(orderItem.total_value)}
+                                        {formatPrice(orderItem.totalValue)}
                                     </td>
                                 </tr>
                             );

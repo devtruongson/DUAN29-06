@@ -158,7 +158,7 @@ const ProductDetailPage = () => {
                                             fontWeight: "600",
                                         }}
                                     >
-                                        {productDetail.productVariants[0].Colour}
+                                        {productDetail?.productVariants[0]?.Colour}
                                     </span>
                                     {/* <strong>
                             &nbsp;
@@ -186,7 +186,7 @@ const ProductDetailPage = () => {
                                             fontWeight: "600",
                                         }}
                                     >
-                                        {productDetail.productVariants[0].Size}
+                                        {productDetail.productVariants[0]?.Size}
                                     </span>
                                 </span>
                             </div>

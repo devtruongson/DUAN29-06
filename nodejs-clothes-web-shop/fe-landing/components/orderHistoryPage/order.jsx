@@ -9,9 +9,9 @@ const Order = (props) => {
         id,
         orderItems,
         totalOrderValue,
-        stateId,
         stateName,
         createdAt,
+        orderState,
         setIsCreateFeedbackModalOpen,
         setIsUpdateFeedbackModalOpen,
         setProductVariantIdForFeedBack
@@ -35,16 +35,16 @@ const Order = (props) => {
                             key={index}
                             productVariantId={orderItem.product_variant_id}
                             name={orderItem.name}
+                            orderState={orderState}
                             image={orderItem.image}
                             quantity={orderItem.quantity}
                             colour={orderItem.colour}
                             size={orderItem.size}
                             price={orderItem.price}
-                            stateId={stateId}
                             hasFeedback={orderItem.has_feedback}
                             setIsCreateFeedbackModalOpen={setIsCreateFeedbackModalOpen}
                             setIsUpdateFeedbackModalOpen={setIsUpdateFeedbackModalOpen}
-                            setProductVariantIdForFeedBack={setProductVariantIdForFeedBack}
+                            setProductVariantIdForFeedB ack={setProductVariantIdForFeedBack}
                         />
                     ))}
             </div>
