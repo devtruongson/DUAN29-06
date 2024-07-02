@@ -1,26 +1,29 @@
-import { swalert, swtoast } from '@/mixins/swal.mixin';
-import { useQuery } from '@tanstack/react-query';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
-import { FaAngleDown, FaShoppingBag } from 'react-icons/fa';
+import { swalert, swtoast } from "@/mixins/swal.mixin";
+import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { FaShoppingBag } from "react-icons/fa";
 
-import logo from '@/public/img/logo.png';
-import queries from '@/queries';
-import customerService from '@/services/customerService';
-import useCustomerStore from '@/store/customerStore';
-import Login from './login';
-import Register from './register';
+import logo from "@/public/img/logo.png";
+import queries from "@/queries";
+import customerService from "@/services/customerService";
+import useCustomerStore from "@/store/customerStore";
+import Login from "./login";
+import Register from "./register";
 
 const Header = () => {
     const [isLogInOpen, setIsLogInOpen] = useState(false);
     const [isRegisterOpen, setIsRegisterOpen] = useState(false);
     const isLoggedIn = useCustomerStore((state) => state.isLoggedIn);
-    const setCustomerLogout = useCustomerStore((state) => state.setCustomerLogout);
+    const setCustomerLogout = useCustomerStore(
+        (state) => state.setCustomerLogout
+    );
 
     const { isError, error, data } = useQuery({
-        ...queries.categories.list()
+        ...queries.categories.list(),
     });
+
     if (isError) console.log(error);
     const categoryList = data?.data;
 
@@ -29,11 +32,13 @@ const Header = () => {
         setIsRegisterOpen(false);
     };
 
+    console.log(categoryList);
+
     return (
         <div className="header-wrapper position-relation">
             {!isLoggedIn && (
                 <>
-                    <div className={!isLogInOpen ? `${'d-none'}` : ''}>
+                    <div className={!isLogInOpen ? `${"d-none"}` : ""}>
                         <Login
                             toRegister={() => {
                                 setIsLogInOpen(false);
@@ -42,7 +47,7 @@ const Header = () => {
                             toClose={toClose}
                         />
                     </div>
-                    <div className={!isRegisterOpen ? `${'d-none'}` : ''}>
+                    <div className={!isRegisterOpen ? `${"d-none"}` : ""}>
                         <Register
                             toLogin={() => {
                                 setIsRegisterOpen(false);
@@ -59,12 +64,17 @@ const Header = () => {
                         <Image className="logo" src={logo} alt="" />
                     </Link>
                 </div>
-                <ul className="menu p-2">
+
+                <ul className="menu p-2 d-block">
                     <li className="menu-item fw-bold text-uppercase position-relative">
-                        <Link href="/collections" className="d-flex align-items-center">
+                        <Link
+                            href="/collections"
+                            className="d-flex align-items-center"
+                        >
                             Tất cả
                         </Link>
                     </li>
+
                     {categoryList &&
                         categoryList.map((categoryLevel1, index) => {
                             return (
@@ -72,30 +82,46 @@ const Header = () => {
                                     className="menu-item fw-bold text-uppercase position-relative"
                                     key={index}
                                 >
-                                    <Link href="#" className="d-flex align-items-center">
-                                        {categoryLevel1.title}
-                                        <span>
+                                    <Link
+                                        href={{
+                                            pathname: "collections",
+                                            query: {
+                                                category:
+                                                    categoryLevel1.categoryID,
+                                            },
+                                        }}
+                                        className="d-flex align-items-center"
+                                    >
+                                        {categoryLevel1.name}
+                                        {/* <span>
                                             <FaAngleDown />
-                                        </span>
+                                        </span> */}
                                     </Link>
                                     <ul className="sub-menu position-absolute">
                                         {categoryLevel1.children &&
-                                            categoryLevel1.children.map((category, index) => {
-                                                return (
-                                                    <li key={index} className="w-100">
-                                                        <Link
-                                                            href={{
-                                                                pathname: '/collections',
-                                                                query: {
-                                                                    category: category.category_id
-                                                                }
-                                                            }}
+                                            categoryLevel1.children.map(
+                                                (category, index) => {
+                                                    return (
+                                                        <li
+                                                            key={index}
+                                                            className="w-100"
                                                         >
-                                                            {category.title}
-                                                        </Link>
-                                                    </li>
-                                                );
-                                            })}
+                                                            <Link
+                                                                href={{
+                                                                    pathname:
+                                                                        "/collections",
+                                                                    query: {
+                                                                        category:
+                                                                            category.category_id,
+                                                                    },
+                                                                }}
+                                                            >
+                                                                {category.name}
+                                                            </Link>
+                                                        </li>
+                                                    );
+                                                }
+                                            )}
                                     </ul>
                                 </li>
                             );
@@ -134,17 +160,27 @@ const Header = () => {
                                                     return { isError: true };
                                                 }
                                             },
-                                            title: 'Đăng xuất',
-                                            icon: 'warning',
-                                            text: 'Bạn muốn đăng xuất?',
+                                            title: "Đăng xuất",
+                                            icon: "warning",
+                                            text: "Bạn muốn đăng xuất?",
                                         })
                                         .then(async (result) => {
-                                            if (result.isConfirmed && !result.value?.isError) {
+                                            if (
+                                                result.isConfirmed &&
+                                                !result.value?.isError
+                                            ) {
                                                 setCustomerLogout();
-                                                swtoast.success({ text: 'Đăng xuất thành công!' });
-                                            } else if (result.isConfirmed && result.value?.isError) {
+                                                swtoast.success({
+                                                    text: "Đăng xuất thành công!",
+                                                });
+                                            } else if (
+                                                result.isConfirmed &&
+                                                result.value?.isError
+                                            ) {
                                                 setCustomerLogout();
-                                                swtoast.success({ text: 'Đăng xuất thành công!' });
+                                                swtoast.success({
+                                                    text: "Đăng xuất thành công!",
+                                                });
                                             }
                                         });
                                 }}
