@@ -1,47 +1,63 @@
-import { createQueryKeys } from '@lukemorales/query-key-factory';
+import { createQueryKeys } from "@lukemorales/query-key-factory";
 
-import feedbackService from '@/services/feedbackService';
-import productService from '@/services/productService';
+import feedbackService from "@/services/feedbackService";
+import productService from "@/services/productService";
 
-export default createQueryKeys('products', {
+export default createQueryKeys("products", {
     list: (category) => ({
         queryKey: [category],
-        queryFn: () => productService.getProductList(category)
+        queryFn: () => productService.getProductList(category),
     }),
     detail: (productId) => {
         return {
             queryKey: [productId],
-            queryFn: () => productService.getDetail(productId)
+            queryFn: () => productService.getDetail(productId),
         };
     },
     feedbackList: (productId) => {
         return {
             queryKey: [productId],
-            queryFn: () => feedbackService.getFeedBackList(productId)
+            queryFn: () => feedbackService.getFeedBackList(productId),
         };
     },
     colourList: (productId) => {
         return {
             queryKey: [productId],
-            queryFn: () => productService.getColourList(productId)
+            queryFn: () => productService.getColourList(productId),
         };
     },
     sizeList: (productId, colourList, selectedColourIndex) => {
+        // console.log(colourList);
+        // console.log(selectedColourIndex);
         const colourId =
-            colourList && selectedColourIndex != null && colourList[selectedColourIndex]?.colour_id;
+            colourList &&
+            selectedColourIndex != null &&
+            colourList[selectedColourIndex]?.colour_id;
         return {
             queryKey: [productId, colourId],
-            queryFn: () => productService.getSizeList(productId, colourId)
+            queryFn: () => productService.getSizeList(productId, colourId),
         };
     },
-    variant: (productId, colourList, selectedColourIndex, sizeList, selectedSizeIndex) => {
+    variant: (
+        productId,
+        colourList,
+        selectedColourIndex,
+        sizeList,
+        selectedSizeIndex
+    ) => {
         const colourId =
-            colourList && selectedColourIndex != null && colourList[selectedColourIndex]?.colour_id;
+            colourList &&
+            selectedColourIndex != null &&
+            colourList[selectedColourIndex]?.colour_id;
         const sizeId =
-            sizeList && selectedSizeIndex != null && sizeList[selectedSizeIndex]?.size_id;
+            sizeList &&
+            selectedSizeIndex != null &&
+            sizeList[selectedSizeIndex]?.size_id;
+
         return {
             queryKey: [productId, colourId, sizeId],
-            queryFn: () => productService.getVariant(productId, colourId, sizeId)
+            queryFn: () =>
+                productService.getVariant(productId, colourId, sizeId),
         };
-    }
+    },
 });

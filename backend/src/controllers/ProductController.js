@@ -201,11 +201,22 @@ let listCustomerSide = async (req, res, next) => {
     try {
         // Lấy danh sách tất cả sản phẩm ưu tiên sản phẩm mới nhất
         let listProduct = await Product.findAll({
-            attributes: ["productID"],
+            // attributes: ["productID"],
             where: whereClause,
+            include: [
+                {
+                    model: ProductPicture,
+                    attributes: ["path"],
+                },
+                {
+                    model: ProductVariant,
+                },
+            ],
             order: [["created_at", "DESC"]],
-            raw: true,
+            nest: true,
         });
+
+        return res.send(listProduct);
 
         let listProductVariant = [];
 
@@ -220,7 +231,8 @@ let listCustomerSide = async (req, res, next) => {
             });
 
             // Duyệt qua danh sách màu
-            for (let { Colour } of listColor) {
+            for (let { productID } of listProduct) {
+                // for (let { Colour } of listColor) {
                 // Tìm biến thể sản phẩm có cùng màu với nhau
                 let listProductVariantSameColour = await ProductVariant.findAll(
                     {
@@ -235,6 +247,7 @@ let listCustomerSide = async (req, res, next) => {
                                 model: Product,
                                 attributes: [
                                     "productID",
+                                    "price",
                                     "name",
                                     "rating",
                                     "sold",
@@ -249,13 +262,16 @@ let listCustomerSide = async (req, res, next) => {
                         ],
                         where: {
                             [Op.and]: [
-                                { Colour }, // Sử dụng Colour (chuỗi) để lọc
+                                // { Colour }, // Sử dụng Colour (chuỗi) để lọc
+                                { productID },
 
                                 { quantity: { [Op.gt]: 0 } },
                             ],
                         },
                     }
                 );
+
+                console.log(listProductVariantSameColour);
 
                 // Chuyển đổi dữ liệu
                 if (listProductVariantSameColour.length) {
@@ -286,6 +302,25 @@ let listCustomerSide = async (req, res, next) => {
                     listProductVariant.push(productVariant);
                 }
             }
+
+            const listProductFind = await Product.findAll({
+                where: {
+                    productId: {
+                        [Op.or]: listProduct,
+                    },
+                },
+                include: [
+                    {
+                        model: ProductPicture,
+                        attributes: ["path"],
+                    },
+                    {
+                        model: ProductVariant,
+                    },
+                ],
+                nest: true,
+                raw: true,
+            });
         }
 
         return res.send(listProductVariant);
@@ -297,6 +332,7 @@ let listCustomerSide = async (req, res, next) => {
 
 let detailCustomerSide = async (req, res, next) => {
     let productID = req.params.productID;
+
     if (productID === undefined)
         return res.status(400).send("Trường productID không tồn tại");
 
@@ -310,9 +346,21 @@ let detailCustomerSide = async (req, res, next) => {
                 "sold",
                 "price",
             ],
-            where: { productID },
-            raw: true,
+            where: { productID: productID },
+            include: [
+                {
+                    model: ProductPicture,
+                    attributes: ["path"],
+                },
+                {
+                    model: ProductVariant,
+                },
+            ],
+            // raw: true,
+            // nest: true,
         });
+
+        // console.log(productDetail);
         return res.send(productDetail);
     } catch (err) {
         console.log(err);
@@ -413,6 +461,8 @@ let listColour = async (req, res, next) => {
 let listSize = async (req, res, next) => {
     let productID = parseInt(req.params.productID);
     let Colour = req.params.Colour; // Không cần parseInt vì Colour là chuỗi
+    console.log("id:", productID);
+    console.log("color:", Colour);
 
     if (productID === undefined || isNaN(productID)) {
         return res.status(400).send("Trường productID không hợp lệ");

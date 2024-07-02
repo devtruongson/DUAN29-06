@@ -1,5 +1,5 @@
-import { Carousel } from 'antd';
-import Image from 'next/image';
+import { Carousel } from "antd";
+import Image from "next/image";
 
 const CarouselFade = ({ imageList }) => {
     return (
@@ -8,8 +8,19 @@ const CarouselFade = ({ imageList }) => {
                 imageList.map((image, index) => {
                     return (
                         <div key={index}>
-                            <div className="position-relative" style={{ paddingTop: '150%' }}>
-                                <Image className="rounded" src={image} fill alt={index} />
+                            <div
+                                className="position-relative"
+                                style={{ paddingTop: "150%" }}
+                            >
+                                <Image
+                                    className="rounded"
+                                    src={image.path.replace(
+                                        image.path.split("/")[2],
+                                        `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`
+                                    )}
+                                    fill
+                                    alt={index}
+                                />
                             </div>
                         </div>
                     );

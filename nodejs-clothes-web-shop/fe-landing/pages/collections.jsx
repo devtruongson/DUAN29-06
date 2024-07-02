@@ -13,7 +13,7 @@ const CollectionPage = () => {
     if (isError) console.log(error);
     const productList = data?.data;
 
-    console.log(productList);
+    // console.log("list :", productList);
 
     return (
         <div
@@ -25,16 +25,16 @@ const CollectionPage = () => {
                     productList.map((product, index) => {
                         return (
                             <div
-                                className="col-3 col-md-4 col-lg-3"
+                                className="col-3 col-md-4 col-lg-3 gap-2 mt-4"
                                 key={index}
                             >
                                 <ProductItem
                                     product_id={product.productID}
-                                    name={product.productName}
-                                    img={product.productPicture}
+                                    name={product.name}
+                                    img={product.ProductPictures[0].path}
                                     price={product.price}
-                                    colour_id={product.colourName}
-                                    sizes={product.sizes}
+                                    colour_id={product.productVariants.Colour}
+                                    sizes={product.productVariants.Size}
                                     rating={product.rating}
                                     feedback_quantity={
                                         product.feedback_quantity
