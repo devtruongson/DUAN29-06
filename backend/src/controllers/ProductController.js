@@ -108,10 +108,10 @@ let update = async (req, res, next) => {
         const filePath = path.join(directoryPath, fileName);
 
         // Xóa file ảnh trên ổ đĩa
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
-        // Xóa bản ghi ảnh trong database
+        // if (fs.existsSync(filePath)) {
+        //   fs.unlinkSync(filePath);
+        // }
+        //   // Xóa bản ghi ảnh trong database
         await ProductPicture.destroy({ where: { productPictureID } }); // Sử dụng productPictureID
       }
 
@@ -125,6 +125,15 @@ let update = async (req, res, next) => {
           let path = 'http://localhost:3000/static/images/' + fileName;
           await ProductPicture.create({
             path,
+            productID: productID // Liên kết hình ảnh với productID
+          });
+        }
+      }
+
+      if (req.body.listImages) {
+        for (let image of req.body.listImages) {
+          await ProductPicture.create({
+            path: image,
             productID: productID // Liên kết hình ảnh với productID
           });
         }
@@ -183,12 +192,19 @@ let listCustomerSide = async (req, res, next) => {
   try {
     // Lấy danh sách tất cả sản phẩm ưu tiên sản phẩm mới nhất
     let listProduct = await Product.findAll({
-      attributes: ['productID'],
       where: whereClause,
+      include: [
+        {
+          model: ProductVariant
+        },
+        {
+          model: ProductPicture, attributes: ['path'],
+        }
+      ],
       order: [['created_at', 'DESC']],
-      raw: true
     });
 
+    return res.send(listProduct);
     let listProductVariant = [];
 
     // Duyệt qua danh sách sản phẩm
@@ -282,10 +298,8 @@ let detailAdminSide = async (req, res, next) => {
       attributes: ['productID', 'name', 'categoryID', 'description', 'price'],
       include: [
         { model: Category, attributes: ['name'] },
-
         {
-          model: ProductVariant, attributes: ['productVariantID', 'Colour', 'Size', 'quantity'],
-
+          model: ProductVariant, attributes: ['productVariantID', 'quantity', 'Colour', 'Size'],
         },
         { model: ProductPicture, attributes: ['path'] }
       ],
@@ -298,12 +312,9 @@ let detailAdminSide = async (req, res, next) => {
 
         return {
           productVariantID: productVariant.productVariantID,
-
-          colour: productVariant.colour,
-
-          size: productVariant.size,
+          colour: productVariant.Colour,
+          size: productVariant.Size,
           quantity: productVariant.quantity,
-
         }
       })
       productDetail = {

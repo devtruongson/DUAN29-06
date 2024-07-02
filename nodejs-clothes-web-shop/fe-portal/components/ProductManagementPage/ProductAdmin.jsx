@@ -45,9 +45,9 @@ const ProductAdmin = (props) => {
         }
         if (newQuantity) {
             try {
-                await axios.put('http://localhost:8080/api/product-variant/update-quantity',
+                await axios.put('http://localhost:8080/api/productVariant/update-quantity',
                     {
-                        product_variant_ids: [props.product_variant_id],
+                        productVariantID: props.product_variant_id,
                         quantity: newQuantity
                     })
                 props.refreshProductVariantTable()
@@ -74,7 +74,6 @@ const ProductAdmin = (props) => {
                 setDisabledInputState(false)
                 props.refreshProductVariantTable()
             } catch (e) {
-                console.log(e)
                 props.refreshProductVariantTable()
                 setDisabledInputState(false)
                 swtoast.error({ text: 'Xảy ra lỗi khi mở bán vui lòng thử lại!' })
@@ -107,8 +106,7 @@ const ProductAdmin = (props) => {
             .then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        await axios.delete('http://localhost:8080/api/product-variant/delete',
-                            { data: { product_variant_ids: [props.product_variant_id] } })
+                        await axios.delete('http://localhost:8080/api/productVariant/delete/' + props.product_variant_id)
                         props.refreshProductVariantTable()
                         swtoast.success({
                             text: 'Xóa biến thể sản phẩm thành công!'
@@ -132,7 +130,7 @@ const ProductAdmin = (props) => {
                             <p className="name">
                                 {props.product_name + '-' + props.colour_name + '-' + props.size_name}
                             </p>
-                            <img src={props.product_image.replace("localhost:", `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`)} />
+                            <img src={props?.product_image?.replace(props?.product_image.split("/")[2], `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`)} />
                         </td>
                         <td className="text-danger fw-bold col-price">
                             <p className='d-flex align-items-center justify-content-center'>
