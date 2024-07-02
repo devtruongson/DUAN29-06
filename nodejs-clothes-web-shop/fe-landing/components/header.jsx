@@ -32,8 +32,6 @@ const Header = () => {
         setIsRegisterOpen(false);
     };
 
-    console.log(categoryList);
-
     return (
         <div className="header-wrapper position-relation">
             {!isLoggedIn && (

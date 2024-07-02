@@ -341,6 +341,7 @@ let listCustomerSide = async (req, res, next) => {
 
 let detailCustomerSide = async (req, res, next) => {
     let productID = req.params.productID;
+
     if (productID === undefined)
         return res.status(400).send("Trường productID không tồn tại");
 
@@ -354,9 +355,21 @@ let detailCustomerSide = async (req, res, next) => {
                 "sold",
                 "price",
             ],
-            where: { productID },
-            raw: true,
+            where: { productID: productID },
+            include: [
+                {
+                    model: ProductPicture,
+                    attributes: ["path"],
+                },
+                {
+                    model: ProductVariant,
+                },
+            ],
+            // raw: true,
+            // nest: true,
         });
+
+        // console.log(productDetail);
         return res.send(productDetail);
     } catch (err) {
         console.log(err);

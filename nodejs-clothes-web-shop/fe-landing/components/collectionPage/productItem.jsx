@@ -4,6 +4,7 @@ import Link from "next/link";
 import { memo } from "react";
 
 import { formatRate } from "@/helpers/format";
+import { handleFomatVnd } from "@/helpers/handleFomatVnd";
 
 const ProductItem = (props) => {
     return (
@@ -26,12 +27,15 @@ const ProductItem = (props) => {
                 <div className="product-thumbnails position-relative">
                     <Image
                         className="img"
-                        src={props.img}
+                        src={props?.img?.replace(
+                            props?.img.split("/")[2],
+                            `localhost:${process.env.NEXT_PUBLIC_BACKEND_URL_PORT}`
+                        )}
                         fill
                         alt={props.name}
                     />
                     <div className="position-absolute rate-box">
-                        <span className="d-flex justify-content-start align-items-center">
+                        {/* <span className="d-flex justify-content-start align-items-center">
                             <span className="rating d-flex justify-content-start align-items-center">
                                 {formatRate(props.rating)}
                             </span>
@@ -39,10 +43,10 @@ const ProductItem = (props) => {
                             <span className="feedback_quantity text-primary d-flex justify-content-start align-items-center">
                                 ⟮{props.feedback_quantity}⟯
                             </span>
-                        </span>
+                        </span> */}
                     </div>
                     <div className="size-box position-absolute">
-                        {props.sizes.map((item, index) => {
+                        {/* {props.sizes.map((item, index) => {
                             return (
                                 <span
                                     className="size-item d-inline-block text-center"
@@ -51,7 +55,7 @@ const ProductItem = (props) => {
                                     {item}
                                 </span>
                             );
-                        })}
+                        })} */}
                     </div>
                 </div>
             </Link>
@@ -86,7 +90,7 @@ const ProductItem = (props) => {
                 </p>
                 <div className="d-flex justify-content-start">
                     <p className="price-after text-danger fw-bold">
-                        {props.price}đ
+                        {handleFomatVnd(props.price)}
                     </p>
                 </div>
             </div>
